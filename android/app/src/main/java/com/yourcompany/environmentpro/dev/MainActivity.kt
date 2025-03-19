@@ -1,4 +1,4 @@
-package com.environmentpro
+package com.yourcompany.environmentpro.dev
 
 import android.os.Build
 import android.os.Bundle
