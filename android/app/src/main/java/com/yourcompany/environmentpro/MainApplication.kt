@@ -1,4 +1,4 @@
-package com.yourcompany.environmentpro.dev
+package com.yourcompany.environmentpro
 
 import android.app.Application
 import android.content.res.Configuration

@@ -1,16 +1,16 @@
 import Constants from 'expo-constants';
 
 export const getEnvironment = () => {
-  const { name, extra = {} } = Constants.expoConfig || {};
-  
+  const { name, extra = {}, stage } = Constants.expoConfig || {};
+
   return {
     appName: name,
     apiUrl: extra.apiUrl,
-    environment: process.env.APP_ENV || 'development',
-    isProduction: (process.env.APP_ENV || 'development') === 'production',
-    isDevelopment: (process.env.APP_ENV || 'development') === 'development',
-    isStaging: (process.env.APP_ENV || 'development') === 'staging',
-    isPreProduction: (process.env.APP_ENV || 'development') === 'preproduction'
+    environment: stage || 'development',
+    isProduction: (stage || 'development') === 'production',
+    isDevelopment: (stage || 'development') === 'development',
+    isStaging: (stage || 'development') === 'staging',
+    isPreProduction: (stage || 'development') === 'preproduction'
   };
 };
 

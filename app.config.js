@@ -1,5 +1,13 @@
 const VERSION = '1.0.0';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const ENV = process.env.stage || 'development';
+const API_URL = process.env.api || 'https://dev-api.yourapp.com';
+const ANDROID_PACKAGE = process.env.package || 'com.yourcompany.environmentpro.dev';
+const IOS_BUNDLE = process.env.bundle || 'com.jack.environmentpro.dev';
+
 // Shared base configuration
 const baseConfig = {
   name: "environment-pro",
@@ -18,12 +26,12 @@ const envConfig = {
       backgroundColor: "#ffffff"
     },
     ios: {
-      bundleIdentifier: "com.jack.environmentpro.dev",
+      bundleIdentifier: IOS_BUNDLE,
       buildNumber: VERSION,
       supportsTablet: true
     },
     android: {
-      package: "com.yourcompany.environmentpro.dev",
+      package: ANDROID_PACKAGE,
       versionCode: 1,
       adaptiveIcon: {
         foregroundImage: "./assets/icons/dev/icon.png",
@@ -31,7 +39,7 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: "https://dev-api.yourapp.com"
+      apiUrl: API_URL
     }
   },
   staging: {
@@ -43,12 +51,12 @@ const envConfig = {
       backgroundColor: "#ffffff"
     },
     ios: {
-      bundleIdentifier: "com.yourcompany.environmentpro.staging",
+      bundleIdentifier: IOS_BUNDLE,
       buildNumber: VERSION,
       supportsTablet: true
     },
     android: {
-      package: "com.yourcompany.environmentpro.staging",
+      package: ANDROID_PACKAGE,
       versionCode: 1,
       adaptiveIcon: {
         foregroundImage: "./assets/icons/staging/icon.png",
@@ -56,7 +64,7 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: "https://staging-api.yourapp.com"
+      apiUrl: API_URL
     }
   },
   preproduction: {
@@ -68,12 +76,12 @@ const envConfig = {
       backgroundColor: "#ffffff"
     },
     ios: {
-      bundleIdentifier: "com.yourcompany.environmentpro.preprod",
+      bundleIdentifier: IOS_BUNDLE,
       buildNumber: VERSION,
       supportsTablet: true
     },
     android: {
-      package: "com.yourcompany.environmentpro.preprod",
+      package: ANDROID_PACKAGE,
       versionCode: 1,
       adaptiveIcon: {
         foregroundImage: "./assets/icons/preprod/icon.png",
@@ -81,7 +89,7 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: "https://preprod-api.yourapp.com"
+      apiUrl: API_URL
     }
   },
   production: {
@@ -93,12 +101,12 @@ const envConfig = {
       backgroundColor: "#ffffff"
     },
     ios: {
-      bundleIdentifier: "com.yourcompany.environmentpro",
+      bundleIdentifier: IOS_BUNDLE,
       buildNumber: VERSION,
       supportsTablet: true
     },
     android: {
-      package: "com.yourcompany.environmentpro",
+      package: ANDROID_PACKAGE,
       versionCode: 1,
       adaptiveIcon: {
         foregroundImage: "./assets/icons/prod/icon.png",
@@ -106,18 +114,17 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: "https://api.yourapp.com"
+      apiUrl: API_URL
     }
   }
 };
 
 // Export dynamic configuration
 export default ({ config }) => {
-  const env = process.env.APP_ENV || 'development';
-  console.log(`Building app for ${env} environment`);
-  
+  console.log(`Building app for ${ENV} environment`);
   return {
+    stage : ENV,
     ...baseConfig,
-    ...envConfig[env]
+    ...envConfig[ENV]
   };
 };
