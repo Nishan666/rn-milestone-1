@@ -9,6 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 import DrawerContent from '../components/DrawerContent';
 import { getEnvironment } from '../utils/environment';
+import ImageUploadScreen from '../screens/ImageUploadScreen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -143,6 +144,39 @@ const AboutStack = () => {
   );
 };
 
+
+const ImageUploadStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#4CAF50',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontFamily: 'Poppins-Medium',
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Image Upload"
+        component={ImageUploadScreen}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <Ionicons
+              name="menu"
+              size={24}
+              color="#fff"
+              style={{ marginLeft: 15 }}
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
+        })}
+      />
+    </Stack.Navigator>
+  );
+};
+
 // Main drawer navigator
 const AppNavigator = ({ setProfileDetails, profileDetails }) => {
   return (
@@ -212,6 +246,17 @@ const AppNavigator = ({ setProfileDetails, profileDetails }) => {
           }}
         >
           {props => <AboutStack {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen
+          name="ImageUploadStack"
+          options={{
+            title: 'Upload',
+            drawerIcon: ({ color }) => (
+              <Ionicons name="information-circle-outline" size={22} color={color} />
+            ),
+          }}
+        >
+          {props => <ImageUploadStack {...props} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     </NavigationContainer>

@@ -10,9 +10,9 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
-        "STAGE": "production",
-        "API_URL": "https://api.yourapp.com",
-        "ANDROID_PACKAGE": "com.yourcompany.environmentpro"
+        "stage": "production",
+        "api": "https://api.yourapp.com",
+        "package": "com.yourcompany.environmentpro"
       }
     }
   },
