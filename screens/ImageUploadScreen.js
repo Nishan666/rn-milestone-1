@@ -31,7 +31,7 @@ export default function ImageUploadScreen() {
     setIsLoading(true);
     try {
       // Test the token with a simple request to your API
-      const response = await fetch(`${API_URL}?test=true`, {
+      const response = await fetch(`${API_URL}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
