@@ -11,13 +11,15 @@ export default function App() {
   const [splashFinished, setSplashFinished] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
+  const [profileDetails, setProfileDetails] = useState(null)
+
   // Load custom fonts and assets
   useEffect(() => {
     async function loadResources() {
       try {
         await loadFonts();
         setFontsLoaded(true);
-        
+
         await loadAssets();
         setAssetsLoaded(true);
       } catch (error) {
@@ -41,7 +43,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {splashFinished ? (
-        <AppNavigator />
+        <AppNavigator setProfileDetails={setProfileDetails} profileDetails={profileDetails} />
       ) : (
         <SplashScreen onFinish={() => setSplashFinished(true)} />
       )}

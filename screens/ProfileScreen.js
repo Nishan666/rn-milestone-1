@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({profileDetails, setProfileDetails}) => {
+  console.log(profileDetails?.email);
+  
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Profile</Text>
       <Text style={styles.text}>This is your user profile screen.</Text>
       <View style={styles.infoBox}>
         <Text style={styles.label}>Name</Text>
-        <Text style={styles.value}>John Doe</Text>
+        <Text style={styles.value}>{profileDetails?.firstName || "Nick"}</Text>
         
         <Text style={styles.label}>Email</Text>
-        <Text style={styles.value}>john.doe@example.com</Text>
+        <Text style={styles.value}>{profileDetails?.email || "mock@mock.com"}</Text>
         
         <Text style={styles.label}>Role</Text>
         <Text style={styles.value}>Administrator</Text>

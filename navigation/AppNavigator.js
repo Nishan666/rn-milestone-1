@@ -14,9 +14,7 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 // Stack navigator for each main section
-const HomeStack = () => {
-  const { environment } = getEnvironment();
-  
+const HomeStack = ({ setProfileDetails, profileDetails }) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -29,27 +27,28 @@ const HomeStack = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="Home" 
-        component={HomeScreen} 
+      <Stack.Screen
+        name="Home"
         options={({ navigation }) => ({
           title: `Home`,
           headerLeft: () => (
-            <Ionicons 
-              name="menu" 
-              size={24} 
-              color="#fff" 
+            <Ionicons
+              name="menu"
+              size={24}
+              color="#fff"
               style={{ marginLeft: 15 }}
               onPress={() => navigation.openDrawer()}
             />
           ),
         })}
-      />
+      >
+        {props => <HomeScreen {...props} setProfileDetails={setProfileDetails} profileDetails={profileDetails} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
 
-const ProfileStack = () => {
+const ProfileStack = ({ setProfileDetails, profileDetails }) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -62,21 +61,20 @@ const ProfileStack = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="Profile" 
-        component={ProfileScreen} 
+      <Stack.Screen
+        name="Profile"
         options={({ navigation }) => ({
           headerLeft: () => (
-            <Ionicons 
-              name="menu" 
-              size={24} 
-              color="#fff" 
+            <Ionicons
+              name="menu"
+              size={24}
+              color="#fff"
               style={{ marginLeft: 15 }}
               onPress={() => navigation.openDrawer()}
             />
           ),
         })}
-      />
+      >{props => <ProfileScreen {...props} setProfileDetails={setProfileDetails} profileDetails={profileDetails} />}</Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -94,15 +92,15 @@ const SettingsStack = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
         options={({ navigation }) => ({
           headerLeft: () => (
-            <Ionicons 
-              name="menu" 
-              size={24} 
-              color="#fff" 
+            <Ionicons
+              name="menu"
+              size={24}
+              color="#fff"
               style={{ marginLeft: 15 }}
               onPress={() => navigation.openDrawer()}
             />
@@ -126,15 +124,15 @@ const AboutStack = () => {
         },
       }}
     >
-      <Stack.Screen 
-        name="About" 
-        component={AboutScreen} 
+      <Stack.Screen
+        name="About"
+        component={AboutScreen}
         options={({ navigation }) => ({
           headerLeft: () => (
-            <Ionicons 
-              name="menu" 
-              size={24} 
-              color="#fff" 
+            <Ionicons
+              name="menu"
+              size={24}
+              color="#fff"
               style={{ marginLeft: 15 }}
               onPress={() => navigation.openDrawer()}
             />
@@ -146,7 +144,7 @@ const AboutStack = () => {
 };
 
 // Main drawer navigator
-const AppNavigator = () => {
+const AppNavigator = ({ setProfileDetails, profileDetails }) => {
   return (
     <NavigationContainer>
       <Drawer.Navigator
@@ -164,50 +162,57 @@ const AppNavigator = () => {
             paddingTop: 2
           },
           drawerItemStyle: {
-            justifyContent: 'center', 
+            justifyContent: 'center',
           },
         }}
       >
-        <Drawer.Screen 
-          name="HomeStack" 
-          component={HomeStack} 
+        <Drawer.Screen
+          name="HomeStack"
           options={{
             title: 'Home',
             drawerIcon: ({ color }) => (
               <Ionicons name="home-outline" size={22} color={color} />
             ),
           }}
-        />
-        <Drawer.Screen 
-          name="ProfileStack" 
-          component={ProfileStack} 
+        >
+          {props => <HomeStack {...props} setProfileDetails={setProfileDetails} profileDetails={profileDetails} />}
+        </Drawer.Screen>
+
+        <Drawer.Screen
+          name="ProfileStack"
           options={{
             title: 'Profile',
             drawerIcon: ({ color }) => (
               <Ionicons name="person-outline" size={22} color={color} />
             ),
           }}
-        />
-        <Drawer.Screen 
-          name="SettingsStack" 
-          component={SettingsStack} 
+        >
+          {props => <ProfileStack {...props} setProfileDetails={setProfileDetails} profileDetails={profileDetails} />}
+        </Drawer.Screen>
+
+        <Drawer.Screen
+          name="SettingsStack"
           options={{
             title: 'Settings',
             drawerIcon: ({ color }) => (
               <Ionicons name="settings-outline" size={22} color={color} />
             ),
           }}
-        />
-        <Drawer.Screen 
-          name="AboutStack" 
-          component={AboutStack} 
+        >
+          {props => <SettingsStack {...props} />}
+        </Drawer.Screen>
+
+        <Drawer.Screen
+          name="AboutStack"
           options={{
             title: 'About',
             drawerIcon: ({ color }) => (
               <Ionicons name="information-circle-outline" size={22} color={color} />
             ),
           }}
-        />
+        >
+          {props => <AboutStack {...props} />}
+        </Drawer.Screen>
       </Drawer.Navigator>
     </NavigationContainer>
   );

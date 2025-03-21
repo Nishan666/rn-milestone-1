@@ -23,28 +23,14 @@ const AboutScreen = () => {
       
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About This App</Text>
-        <Text style={styles.paragraph}>
-          This is a multi-environment React Native application that demonstrates
-          how to build and deploy apps for different environments like development,
-          staging, pre-production, and production.
-        </Text>
-      </View>
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Features</Text>
-        <Text style={styles.listItem}>• Environment-specific configurations</Text>
-        <Text style={styles.listItem}>• Custom splash screen</Text>
-        <Text style={styles.listItem}>• Navigation drawer</Text>
-        <Text style={styles.listItem}>• Stack navigation</Text>
-        <Text style={styles.listItem}>• Custom fonts</Text>
-      </View>
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Contact</Text>
-        <Text style={styles.paragraph}>
-          For support or inquiries, please contact us at:
-        </Text>
-        <Text style={styles.contactInfo}>support@environmentpro.com</Text>
+        <Text style={styles.paragraph}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an 
+          unknown printer took a galley of type and scrambled it to make a type specimen book. 
+          It has survived not only five centuries, but also the leap into electronic typesetting, 
+          remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset 
+          sheets containing Lorem Ipsum passages, and more
+          recently with desktop publishing software like Aldus PageMaker 
+          including versions of Lorem Ipsum.</Text>
       </View>
     </ScrollView>
   );
