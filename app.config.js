@@ -39,7 +39,10 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: API_URL
+      apiUrl: API_URL,
+      eas: {
+        projectId: "63bbcc7d-3f48-435d-aad3-7c0165d80e0c"
+      }
     }
   },
   staging: {
@@ -64,7 +67,10 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: API_URL
+      apiUrl: API_URL,
+      eas: {
+        projectId: "63bbcc7d-3f48-435d-aad3-7c0165d80e0c"
+      }
     }
   },
   preproduction: {
@@ -89,7 +95,10 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: API_URL
+      apiUrl: API_URL,
+      eas: {
+        projectId: "63bbcc7d-3f48-435d-aad3-7c0165d80e0c"
+      }
     }
   },
   production: {
@@ -114,7 +123,10 @@ const envConfig = {
       }
     },
     extra: {
-      apiUrl: API_URL
+      apiUrl: API_URL,
+      eas: {
+        projectId: "63bbcc7d-3f48-435d-aad3-7c0165d80e0c"
+      }
     }
   }
 };

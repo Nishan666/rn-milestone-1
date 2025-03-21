@@ -1,0 +1,22 @@
+{
+  "cli": {
+    "version": ">= 16.0.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "STAGE": "production",
+        "API_URL": "https://api.yourapp.com",
+        "ANDROID_PACKAGE": "com.yourcompany.environmentpro"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
