@@ -5,7 +5,7 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 import { Text } from 'react-native';
 import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
 
-const DrawerContent = (props) => {
+const DrawerContent = (props : any) => {
   const { appName, environment } = getEnvironment();
   const { icon } = getEnvironmentAssets();
 

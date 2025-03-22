@@ -12,11 +12,11 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 export default function ImageUploadScreen() {
-  const [token, setToken] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [image, setImage] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState('');
+  const [token, setToken] = useState<string>('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
 
   // API endpoint
   const API_URL = 'https://vevl7yryx5oh4ippc7ub3sgjwe0liphz.lambda-url.us-east-1.on.aws/';
@@ -30,7 +30,6 @@ export default function ImageUploadScreen() {
 
     setIsLoading(true);
     try {
-      // Test the token with a simple request to your API
       const response = await fetch(`${API_URL}`, {
         method: 'GET',
         headers: {
@@ -45,7 +44,7 @@ export default function ImageUploadScreen() {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Invalid token');
       }
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert('Authentication Error', error.message);
     } finally {
       setIsLoading(false);
@@ -56,7 +55,7 @@ export default function ImageUploadScreen() {
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert('Permission Required', 'You need to allow access to your photos to upload images.');
       return;
     }
@@ -68,7 +67,7 @@ export default function ImageUploadScreen() {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets.length > 0) {
       setImage(result.assets[0].uri);
       setUploadStatus('Image selected. Ready to upload.');
     }
@@ -85,7 +84,6 @@ export default function ImageUploadScreen() {
     setUploadStatus('Getting presigned URL...');
 
     try {
-      // Get the presigned URL from your Lambda function
       const filename = `image_${Date.now()}.jpg`;
       const response = await fetch(
         `${API_URL}?filename=${filename}&contentType=image/jpeg`,
@@ -103,11 +101,9 @@ export default function ImageUploadScreen() {
         throw new Error(data.error || 'Failed to get presigned URL');
       }
 
-      const presignedUrl = data.presignedUrl;
-      
+      const presignedUrl: string = data.presignedUrl;
       setUploadStatus('Uploading image to S3...');
 
-      // Upload the image using the presigned URL
       const imageResponse = await fetch(image);
       const blob = await imageResponse.blob();
 
@@ -121,13 +117,12 @@ export default function ImageUploadScreen() {
 
       if (uploadResponse.ok) {
         setUploadStatus('Image uploaded successfully!');
-        // Get the URL without the query parameters
         const imageUrl = presignedUrl.split('?')[0];
         Alert.alert('Success', `Image uploaded successfully!\nFilename: ${data.filename}`);
       } else {
         throw new Error('Failed to upload image');
       }
-    } catch (error) {
+    } catch (error: any) {
       setUploadStatus(`Error: ${error.message}`);
       Alert.alert('Upload Error', error.message);
     } finally {
@@ -147,16 +142,14 @@ export default function ImageUploadScreen() {
             value={token}
             onChangeText={setToken}
             placeholder="Paste your bearer token here"
-            secureTextEntry={true}
+            secureTextEntry
           />
           <Button title="Login" onPress={handleLogin} disabled={isLoading} />
           {isLoading && <ActivityIndicator style={styles.loader} size="small" color="#0000ff" />}
         </View>
       ) : (
         <View style={styles.uploadContainer}>
-          {image && (
-            <Image source={{ uri: image }} style={styles.imagePreview} />
-          )}
+          {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
           
           <View style={styles.buttonContainer}>
             <Button title="Pick an Image" onPress={pickImage} disabled={isLoading} />
@@ -168,7 +161,6 @@ export default function ImageUploadScreen() {
           </View>
           
           {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
-          
           <Text style={styles.status}>{uploadStatus}</Text>
         </View>
       )}
@@ -243,3 +235,4 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
+

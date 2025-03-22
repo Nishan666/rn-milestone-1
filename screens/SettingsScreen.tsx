@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const SettingsScreen = () => {
-  const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [location, setLocation] = useState(true);
+const SettingsScreen: React.FC = () => {
+  const [notifications, setNotifications] = useState<boolean>(true);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [location, setLocation] = useState<boolean>(true);
   
   return (
     <View style={styles.container}>
