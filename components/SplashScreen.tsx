@@ -1,48 +1,17 @@
 // components/SplashScreen.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
+import { useSplashViewModel } from '../viewModels/useSplashViewModel';
+import { SplashScreenProps } from '../models/types';
 
-const SplashScreen = ({ onFinish }) => {
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const { appName } = getEnvironment();
-  const { splash } = getEnvironmentAssets();
-
-  useEffect(() => {
-    // Simulate loading progress
-    const interval = setInterval(() => {
-      setLoadingProgress((prev) => {
-        const newProgress = prev + 0.1;
-        if (newProgress >= 1) {
-          clearInterval(interval);
-          // Add a small delay before finishing
-          setTimeout(() => {
-            onFinish();
-          }, 500);
-          return 1;
-        }
-        return newProgress;
-      });
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
-
+const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished }) => {
+  const { appName, loadingProgress, splash } = useSplashViewModel({ setSplashFinished });
   return (
     <View style={styles.splashContainer}>
-      <Image
-        source={splash}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <Image source={splash} style={styles.logo} resizeMode="contain" />
       <Text style={styles.appTitle}>{appName}</Text>
       <View style={styles.progressBarContainer}>
-        <View 
-          style={[
-            styles.progressBar, 
-            { width: `${loadingProgress * 100}%` }
-          ]} 
-        />
+        <View style={[styles.progressBar, { width: `${loadingProgress * 100}%` }]} />
       </View>
       <Text style={styles.loadingText}>Loading... {Math.floor(loadingProgress * 100)}%</Text>
     </View>

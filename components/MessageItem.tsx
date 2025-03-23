@@ -1,11 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-interface MessageItemProps {
-  text: string;
-  sender: 'user' | 'system';
-  timestamp: number;
-}
+import { MessageItemProps } from '../models/types';
 
 const MessageItem: React.FC<MessageItemProps> = ({ text, sender, timestamp }) => {
   return (

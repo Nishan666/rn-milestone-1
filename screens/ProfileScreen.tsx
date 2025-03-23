@@ -1,41 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useProfileViewModel } from '../viewModels/useProfileViewModel';
 
-interface ProfileDetails {
-  nickname?: string;
-  email?: string;
-}
-
-const ProfileScreen: React.FC = () => {
-  const [profile, setProfile] = useState<ProfileDetails | null>(null);
-
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const storedData = await AsyncStorage.getItem('profileData');
-        if (storedData) {
-          setProfile(JSON.parse(storedData));
-        }
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  const handleEdit = async () => {
-    try {
-      await AsyncStorage.removeItem('profileData');
-      (navigation as any).navigate('HomeStack');
-    } catch (error) {
-      console.error('Failed to rename:', error);
-    }
-  };
+const ProfileScreen = () => {
+  const { handleEdit, profile } = useProfileViewModel();
 
   return (
     <View style={styles.container}>
@@ -43,7 +11,8 @@ const ProfileScreen: React.FC = () => {
       <Text style={styles.text}>This is your user profile screen.</Text>
       <View style={styles.infoBox}>
         <Text style={styles.label}>Nickname</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={styles.value}>{profile?.nickname}</Text>
           <TouchableOpacity style={styles.button} onPress={handleEdit}>
             <Text>{profile?.nickname ? 'Edit' : 'Create'}</Text>
@@ -97,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    marginBottom: 10
+    marginBottom: 10,
   },
 });
 

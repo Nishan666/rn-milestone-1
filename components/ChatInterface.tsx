@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,170 +10,58 @@ import {
   Platform,
   SafeAreaView,
 } from 'react-native';
-import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  orderBy,
-  query,
-  onSnapshot,
-  serverTimestamp,
-  Timestamp,
-  where,
-} from 'firebase/firestore';
+import { useChatViewModel } from '../viewModels/useChatViewModel';
+import { Message } from '../models/types';
 
-interface ProfileData {
-  nickname: string;
-  email: string;
-  roomId: string;
-  roomName: string;
-}
-
-interface Message {
-  id?: string;
-  text: string;
-  createdAt: Date;
-  userId: string;
-  userName: string;
-}
-
-interface ChatInterfaceProps {
-  profileData: ProfileData;
-  onLogout: () => void;
-}
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB2WjnyfE7PK8ZTM4_O5ukAeinCNVozFgE",
-  authDomain: "chat-app-a56fe.firebaseapp.com",
-  projectId: "chat-app-a56fe",
-  storageBucket: "chat-app-a56fe.firebasestorage.app",
-  messagingSenderId: "110606577185",
-  appId: "1:110606577185:web:baddf6664e8f81a2d07d60"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ profileData, onLogout }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [sendLoading, setSendLoading] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
-
-  // Current user info
-  const currentUser = {
-    id: profileData.email,
-    name: profileData.nickname
-  };
-
-  useEffect(() => {
-    // Create a reference to the messages collection
-    const messagesRef = collection(db, 'messages');
-
-    // Create a query against the collection to order messages by createdAt and filter by roomId
-    const q = query(
-      messagesRef, 
-      where("roomId", "==", profileData.roomId),
-      orderBy('createdAt', 'desc')
-    );
-
-    // Listen for real-time updates
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const messagesFirestore = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-
-        // Handle timestamp that might be null or missing
-        let createdAtDate = new Date();
-        if (data.createdAt instanceof Timestamp) {
-          createdAtDate = data.createdAt.toDate();
-        } else if (data.createdAt) {
-          // If it's not a Firestore timestamp but exists, try to parse it
-          createdAtDate = new Date(data.createdAt);
-        }
-
-        return {
-          id: doc.id,
-          text: data.text || '',
-          createdAt: createdAtDate,
-          userId: data.userId || 'unknown',
-          userName: data.userName || 'Anonymous'
-        } as Message;
-      });
-
-      setMessages(messagesFirestore);
-      setLoading(false);
-    }, error => {
-      console.error("Error listening to messages: ", error);
-      setLoading(false);
-    });
-
-    // Add welcome message when chat is first shown if there are no messages
-    if (messages.length === 0) {
-      // This is just for UI display, not stored in Firebase
-      setMessages([{
-        id: 'welcome',
-        text: `Welcome to the "${profileData.roomName}" room, ${profileData.nickname}!`,
-        createdAt: new Date(),
-        userId: 'system',
-        userName: 'System'
-      }]);
-    }
-
-    // Clean up listener on unmount
-    return () => unsubscribe();
-  }, [profileData.roomId]);
-
-  const sendMessage = async () => {
-    if (inputText.trim() === '') return;
-    
-    setSendLoading(true);
-    const inputTextMessage = inputText;
-    setInputText('');
-
-    try {
-      const now = new Date();
-
-      // Add new message to Firestore
-      await addDoc(collection(db, 'messages'), {
-        text: inputTextMessage,
-        createdAt: serverTimestamp(),
-        localCreatedAt: now.toISOString(), // Backup timestamp
-        userId: currentUser.id,
-        userName: currentUser.name,
-        roomId: profileData.roomId
-      });
-
-      setSendLoading(false);
-    } catch (error) {
-      console.error("Error sending message: ", error);
-      setSendLoading(false);
-    }
-  };
+const ChatInterface: React.FC = () => {
+  const {
+    flatListRef,
+    inputText,
+    loading,
+    messages,
+    sendLoading,
+    sendMessage,
+    setInputText,
+    exitRoom,
+    profileData,
+    roomData,
+  } = useChatViewModel();
 
   const renderMessage = ({ item }: { item: Message }) => {
-    const isCurrentUser = item.userId === currentUser.id;
+    const isCurrentUser = item.userId === profileData?.email;
     const isSystemMessage = item.userId === 'system';
 
     return (
-      <View style={[
-        styles.messageContainer,
-        isSystemMessage ? styles.systemMessage : (isCurrentUser ? styles.rightMessage : styles.leftMessage)
-      ]}>
-        {!isCurrentUser && !isSystemMessage && (
-          <Text style={styles.userName}>{item.userName}</Text>
-        )}
-        <View style={[
-          styles.messageBubble,
-          isSystemMessage ? styles.systemBubble : (isCurrentUser ? styles.rightBubble : styles.leftBubble)
+      <View
+        style={[
+          styles.messageContainer,
+          isSystemMessage
+            ? styles.systemMessage
+            : isCurrentUser
+              ? styles.rightMessage
+              : styles.leftMessage,
         ]}>
-          <Text style={[
-            styles.messageText,
-            isSystemMessage ? styles.systemMessageText : (isCurrentUser ? styles.rightMessageText : styles.leftMessageText)
-          ]}>{item.text}</Text>
+        {!isCurrentUser && !isSystemMessage && <Text style={styles.userName}>{item.userName}</Text>}
+        <View
+          style={[
+            styles.messageBubble,
+            isSystemMessage
+              ? styles.systemBubble
+              : isCurrentUser
+                ? styles.rightBubble
+                : styles.leftBubble,
+          ]}>
+          <Text
+            style={[
+              styles.messageText,
+              isSystemMessage
+                ? styles.systemMessageText
+                : isCurrentUser
+                  ? styles.rightMessageText
+                  : styles.leftMessageText,
+            ]}>
+            {item.text}
+          </Text>
         </View>
         {!isSystemMessage && (
           <Text style={styles.timestamp}>
@@ -187,18 +75,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ profileData, onLogout }) 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{profileData.roomName}</Text>
-        <Text style={styles.welcomeText}>Logged in as: {profileData.nickname}</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+        <Text style={styles.headerTitle}>{roomData?.roomName}</Text>
+        <Text style={styles.welcomeText}>Logged in as: {profileData?.nickname}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={exitRoom}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
-      
+
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         {loading ? (
           <View style={styles.loadingContainer}>
             <Text>Loading messages...</Text>
@@ -226,11 +113,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ profileData, onLogout }) 
           <TouchableOpacity
             style={[
               styles.sendButton,
-              (inputText.trim() === '' || sendLoading) ? styles.sendButtonDisabled : null
+              inputText.trim() === '' || sendLoading ? styles.sendButtonDisabled : null,
             ]}
             onPress={sendMessage}
-            disabled={inputText.trim() === '' || sendLoading}
-          >
+            disabled={inputText.trim() === '' || sendLoading}>
             <Text style={styles.sendButtonText}>Send</Text>
           </TouchableOpacity>
         </View>
@@ -373,7 +259,5 @@ const styles = StyleSheet.create({
 
 export default ChatInterface;
 
-
-
-// ADD INDEX 
+// ADD INDEX
 // https://console.firebase.google.com/v1/r/project/chat-app-a56fe/firestore/indexes?create_composite=Ck9wcm9qZWN0cy9jaGF0LWFwcC1hNTZmZS9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvbWVzc2FnZXMvaW5kZXhlcy9fEAEaCgoGcm9vbUlkEAEaDQoJY3JlYXRlZEF0EAIaDAoIX19uYW1lX18QAg

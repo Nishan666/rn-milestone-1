@@ -1,14 +1,7 @@
 import Constants from 'expo-constants';
+import { EnvironmentAssets, EnvironmentConfig } from '../models/types';
 
-interface EnvironmentConfig {
-  appName?: string;
-  apiUrl?: string;
-  environment: string;
-  isProduction: boolean;
-  isDevelopment: boolean;
-  isStaging: boolean;
-  isPreProduction: boolean;
-}
+
 
 export const getEnvironment = (): EnvironmentConfig => {
   const { name, extra = {} } = Constants.expoConfig || {};
@@ -25,10 +18,7 @@ export const getEnvironment = (): EnvironmentConfig => {
   };
 };
 
-interface EnvironmentAssets {
-  icon: any;
-  splash: any;
-}
+
 
 export const getEnvironmentAssets = (): EnvironmentAssets => {
   const { environment } = getEnvironment();

@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const SettingsScreen: React.FC = () => {
-  const [notifications, setNotifications] = useState<boolean>(true);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [location, setLocation] = useState<boolean>(true);
-  
+  const { darkMode, location, notifications, setDarkMode, setLocation, setNotifications } =
+    useSettingsViewModel();
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Settings</Text>
-      
+
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
           <Ionicons name="notifications-outline" size={24} color="#333" />
@@ -23,7 +22,7 @@ const SettingsScreen: React.FC = () => {
           thumbColor={notifications ? '#4CAF50' : '#f4f3f4'}
         />
       </View>
-      
+
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
           <Ionicons name="moon-outline" size={24} color="#333" />
@@ -36,7 +35,7 @@ const SettingsScreen: React.FC = () => {
           thumbColor={darkMode ? '#4CAF50' : '#f4f3f4'}
         />
       </View>
-      
+
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
           <Ionicons name="location-outline" size={24} color="#333" />
@@ -49,7 +48,7 @@ const SettingsScreen: React.FC = () => {
           thumbColor={location ? '#4CAF50' : '#f4f3f4'}
         />
       </View>
-      
+
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Reset Settings</Text>
       </TouchableOpacity>

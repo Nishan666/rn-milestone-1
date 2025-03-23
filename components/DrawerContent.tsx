@@ -3,20 +3,14 @@ import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Text } from 'react-native';
-import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
+import { useDrawerContentViewModel } from '../viewModels/useDrawerContentViewModel';
 
-const DrawerContent = (props : any) => {
-  const { appName, environment } = getEnvironment();
-  const { icon } = getEnvironmentAssets();
-
+const DrawerContent = (props: any) => {
+  const { icon, appName, environment } = useDrawerContentViewModel();
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
-        <Image
-          source={icon}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Image source={icon} style={styles.logo} resizeMode="contain" />
         <Text style={styles.appName}>{appName}</Text>
         <View style={styles.envBadge}>
           <Text style={styles.envText}>{environment}</Text>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,174 +9,33 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoomViewModel } from '../viewModels/useRoomViewModel';
 
-interface RoomData {
-  roomId: string;
-  roomName: string;
-}
-
-interface RoomFormProps {
-  onSubmit: (data: RoomData) => void;
-}
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB2WjnyfE7PK8ZTM4_O5ukAeinCNVozFgE",
-  authDomain: "chat-app-a56fe.firebaseapp.com",
-  projectId: "chat-app-a56fe",
-  storageBucket: "chat-app-a56fe.firebasestorage.app",
-  messagingSenderId: "110606577185",
-  appId: "1:110606577185:web:baddf6664e8f81a2d07d60"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const RoomForm: React.FC<RoomFormProps> = ({ onSubmit }) => {
-  const [nickname, setNickname] = useState(""); 
-
-  useEffect(() => {
-    const loadNickname = async () => {
-      try {
-        const data = await AsyncStorage.getItem("profileData");
-        if (data) {
-          setNickname(JSON.parse(data).nickname);
-        }
-      } catch (error) {
-        console.error("Error retrieving profile data:", error);
-      }
-    };
-
-    loadNickname();
-  }, []);
-  
-  const [roomName, setRoomName] = useState('');
-  const [createNewRoom, setCreateNewRoom] = useState(true);
-  const [existingRooms, setExistingRooms] = useState<{ id: string, name: string }[]>([]);
-  const [selectedRoomId, setSelectedRoomId] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState<{
-    email?: string;
-    room?: string;
-  }>({});
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
-
-  const fetchRooms = async () => {
-    try {
-      const roomsCollection = collection(db, 'rooms');
-      const roomsQuery = query(roomsCollection, orderBy('createdAt', 'desc'));
-      const roomsSnapshot = await getDocs(roomsQuery);
-
-      const roomsList = roomsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        name: doc.data().name || 'Unnamed Room',
-      }));
-
-      setExistingRooms(roomsList);
-      if (roomsList.length > 0) {
-        setSelectedRoomId(roomsList[0].id);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching rooms:', error);
-      setLoading(false);
-    }
-  };
-
-  const createRoom = async () => {
-    if (!roomName.trim()) {
-      setErrors(prev => ({ ...prev, room: 'Room name is required' }));
-      return null;
-    }
-
-    try {
-      const roomRef = await addDoc(collection(db, 'rooms'), {
-        name: roomName,
-        createdAt: new Date().toISOString(),
-        createdBy: nickname,
-      });
-
-      return { id: roomRef.id, name: roomName };
-    } catch (error) {
-      console.error('Error creating room:', error);
-      setErrors(prev => ({ ...prev, room: 'Failed to create room' }));
-      return null;
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors: {
-      room?: string;
-    } = {};
-
-    if (createNewRoom && !roomName.trim()) {
-      newErrors.room = 'Room name is required';
-    } else if (!createNewRoom && !selectedRoomId) {
-      newErrors.room = 'Please select a room';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    try {
-      if (!validateForm()) return;
-
-      let roomData;
-      if (createNewRoom) {
-        roomData = await createRoom();
-        if (!roomData) return;
-      } else {
-        const selectedRoom = existingRooms.find(room => room.id === selectedRoomId);
-        roomData = selectedRoom;
-      }
-
-      if (!roomData) return;
-
-      await AsyncStorage.setItem(
-        "roomData",
-        JSON.stringify({
-          roomId: roomData.id,
-          roomName: roomData.name,
-        })
-      );
-
-      onSubmit({
-        roomId: roomData.id,
-        roomName: roomData.name,
-      });
-    } catch (error) {
-      console.error("Error saving profile data:", error);
-    }
-  };
+const RoomForm: React.FC = () => {
+  const {
+    createNewRoom,
+    setCreateNewRoom,
+    errors,
+    roomName,
+    setRoomName,
+    setErrors,
+    loading,
+    existingRooms,
+    selectedRoomId,
+    setSelectedRoomId,
+    handleSubmit,
+  } = useRoomViewModel();
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
+      style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Welcome!</Text>
         <View style={styles.roomOptions}>
           <TouchableOpacity
             style={[styles.option, createNewRoom ? styles.selectedOption : null]}
-            onPress={() => setCreateNewRoom(true)}
-          >
+            onPress={() => setCreateNewRoom(true)}>
             <Text style={createNewRoom ? styles.selectedOptionText : styles.optionText}>
               Create New Room
             </Text>
@@ -184,8 +43,7 @@ const RoomForm: React.FC<RoomFormProps> = ({ onSubmit }) => {
 
           <TouchableOpacity
             style={[styles.option, !createNewRoom ? styles.selectedOption : null]}
-            onPress={() => setCreateNewRoom(false)}
-          >
+            onPress={() => setCreateNewRoom(false)}>
             <Text style={!createNewRoom ? styles.selectedOptionText : styles.optionText}>
               Join Existing Room
             </Text>
@@ -198,7 +56,7 @@ const RoomForm: React.FC<RoomFormProps> = ({ onSubmit }) => {
             <TextInput
               style={[styles.input, errors.room ? styles.inputError : null]}
               value={roomName}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setRoomName(text);
                 if (errors.room) setErrors(prev => ({ ...prev, room: undefined }));
               }}
@@ -213,22 +71,20 @@ const RoomForm: React.FC<RoomFormProps> = ({ onSubmit }) => {
               <Text style={styles.loadingText}>Loading rooms...</Text>
             ) : existingRooms.length > 0 ? (
               <View style={styles.roomList}>
-                {existingRooms.map((room) => (
+                {existingRooms.map(room => (
                   <TouchableOpacity
                     key={room.id}
                     style={[
                       styles.roomItem,
                       selectedRoomId === room.id ? styles.selectedRoomItem : null,
                     ]}
-                    onPress={() => setSelectedRoomId(room.id)}
-                  >
+                    onPress={() => setSelectedRoomId(room.id)}>
                     <Text
                       style={
                         selectedRoomId === room.id
                           ? styles.selectedRoomItemText
                           : styles.roomItemText
-                      }
-                    >
+                      }>
                       {room.name}
                     </Text>
                   </TouchableOpacity>

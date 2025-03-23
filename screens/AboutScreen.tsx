@@ -1,12 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, useColorScheme } from 'react-native';
-import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { useAboutViewModel } from '../viewModels/useAboutViewModel';
 
 const AboutScreen: React.FC = () => {
-  const { appName, environment } = getEnvironment();
-  const { icon } = getEnvironmentAssets();
-  const colorScheme = useColorScheme(); 
-
+  const { appName, environment, icon } = useAboutViewModel();
 
   return (
     <ScrollView style={styles.container}>
@@ -14,7 +11,8 @@ const AboutScreen: React.FC = () => {
         <Image source={icon} style={styles.logo} resizeMode="contain" />
         <Text style={styles.heading}>{appName}</Text>
         <Text style={styles.version}>Version 1.0.0</Text>
-        <View style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
+        <View
+          style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
           <Text style={styles.envText}>{environment.toUpperCase()}</Text>
         </View>
       </View>
@@ -22,9 +20,9 @@ const AboutScreen: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About This App</Text>
         <Text style={styles.paragraph}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-          industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-          and scrambled it to make a type specimen book.
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+          been the industry's standard dummy text ever since the 1500s, when an unknown printer took
+          a galley of type and scrambled it to make a type specimen book.
         </Text>
       </View>
     </ScrollView>

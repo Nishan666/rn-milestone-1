@@ -2,19 +2,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
+import { useMainAppViewModel } from '../viewModels/useMainAppViewModel';
 
 const MainApp = () => {
-  const { appName, environment } = getEnvironment();
-  const { icon } = getEnvironmentAssets();
+  const { appName, environment, icon } = useMainAppViewModel();
 
   return (
     <View style={styles.container}>
-      <Image
-        source={icon}
-        style={styles.icon}
-        resizeMode="contain"
-      />
+      <Image source={icon} style={styles.icon} resizeMode="contain" />
       <Text style={styles.welcomeText}>Welcome to {appName}</Text>
       <Text style={styles.environmentText}>Environment: {environment}</Text>
       <StatusBar style="auto" />

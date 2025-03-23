@@ -1,36 +1,16 @@
-// App.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { loadFonts, loadAssets } from './utils/fontLoader';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './navigation/AppNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { useMainModel } from './viewModels/useMainModel';
 
-export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [splashFinished, setSplashFinished] = useState(false);
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
+// Separate component that can use Redux
+function AppContent() {
+  const { assetsLoaded, fontsLoaded, splashFinished, setSplashFinished } = useMainModel();
 
-  const [profileDetails, setProfileDetails] = useState(null)
-
-  // Load custom fonts and assets
-  useEffect(() => {
-    async function loadResources() {
-      try {
-        await loadFonts();
-        setFontsLoaded(true);
-
-        await loadAssets();
-        setAssetsLoaded(true);
-      } catch (error) {
-        console.error('Error loading resources:', error);
-      }
-    }
-
-    loadResources();
-  }, []);
-
-  // Don't render anything until fonts and assets are loaded
   if (!fontsLoaded || !assetsLoaded) {
     return (
       <View style={styles.container}>
@@ -39,15 +19,17 @@ export default function App() {
     );
   }
 
-  // Show splash screen or main app based on state
+  return splashFinished ? <AppNavigator /> : <SplashScreen setSplashFinished={setSplashFinished} />;
+}
+
+// Main App component that provides Redux
+export default function App() {
   return (
-    <SafeAreaProvider>
-      {splashFinished ? (
-        <AppNavigator setProfileDetails={setProfileDetails} profileDetails={profileDetails} />
-      ) : (
-        <SplashScreen onFinish={() => setSplashFinished(true)} />
-      )}
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <AppContent />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
