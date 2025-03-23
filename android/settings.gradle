@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'Environment Pro'
+rootProject.name = 'Environment Dev'
 
 dependencyResolutionManagement {
   versionCatalogs {
