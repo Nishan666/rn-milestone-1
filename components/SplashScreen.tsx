@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { useSplashViewModel } from '../viewModels/useSplashViewModel';
 import { SplashScreenProps } from '../models/types';
 
-const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished }) => {
+const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished , authenticated }) => {
   const { appName, loadingProgress, splash } = useSplashViewModel({ setSplashFinished });
   return (
     <View style={styles.splashContainer}>
@@ -14,6 +14,7 @@ const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished }) => {
         <View style={[styles.progressBar, { width: `${loadingProgress * 100}%` }]} />
       </View>
       <Text style={styles.loadingText}>Loading... {Math.floor(loadingProgress * 100)}%</Text>
+      <Text style={styles.authfailedText}>{!authenticated && 'Not Authenticated'}</Text>
     </View>
   );
 };
@@ -52,6 +53,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
     color: '#666',
+    marginTop: 10,
+  },
+  authfailedText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    color: '#f44336',
     marginTop: 10,
   },
 });

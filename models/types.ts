@@ -53,6 +53,11 @@ export interface MessageItemProps {
 
 export interface SplashScreenProps {
   setSplashFinished: (finished: boolean) => void;
+  authenticated: boolean;
+}
+
+export interface SplashViewModelProps {
+  setSplashFinished: (finished: boolean) => void;
 }
 
 export interface ConfirmationModalProps {

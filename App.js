@@ -9,7 +9,7 @@ import { useMainModel } from './viewModels/useMainModel';
 
 // Separate component that can use Redux
 function AppContent() {
-  const { assetsLoaded, fontsLoaded, splashFinished, setSplashFinished } = useMainModel();
+  const { assetsLoaded, fontsLoaded, splashFinished, setSplashFinished, authenticated } = useMainModel();
 
   if (!fontsLoaded || !assetsLoaded) {
     return (
@@ -19,7 +19,7 @@ function AppContent() {
     );
   }
 
-  return splashFinished ? <AppNavigator /> : <SplashScreen setSplashFinished={setSplashFinished} />;
+  return (splashFinished && authenticated) ? <AppNavigator /> : <SplashScreen setSplashFinished={setSplashFinished} authenticated={authenticated} />;
 }
 
 // Main App component that provides Redux

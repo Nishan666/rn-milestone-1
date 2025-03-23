@@ -4,8 +4,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const SettingsScreen: React.FC = () => {
-  const { darkMode, location, notifications, setDarkMode, setLocation, setNotifications } =
-    useSettingsViewModel();
+  const {
+    darkMode,
+    location,
+    notifications,
+    setDarkMode,
+    setLocation,
+    setNotifications,
+    biometrics,
+    toggleBiometrics,
+  } = useSettingsViewModel();
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Settings</Text>
@@ -46,6 +54,19 @@ const SettingsScreen: React.FC = () => {
           onValueChange={setLocation}
           trackColor={{ false: '#ccc', true: '#81b0ff' }}
           thumbColor={location ? '#4CAF50' : '#f4f3f4'}
+        />
+      </View>
+
+      <View style={styles.settingItem}>
+        <View style={styles.settingInfo}>
+          <Ionicons name="notifications-outline" size={24} color="#333" />
+          <Text style={styles.settingText}>Biometrics</Text>
+        </View>
+        <Switch
+          value={biometrics}
+          onValueChange={toggleBiometrics}
+          trackColor={{ false: '#ccc', true: '#81b0ff' }}
+          thumbColor={notifications ? '#4CAF50' : '#f4f3f4'}
         />
       </View>
 

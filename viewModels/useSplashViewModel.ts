@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getEnvironment, getEnvironmentAssets } from '../utils/environment';
-import { SplashScreenProps } from '../models/types';
+import { SplashViewModelProps } from '../models/types';
 
-export const useSplashViewModel = ({ setSplashFinished }: SplashScreenProps) => {
+export const useSplashViewModel = ({ setSplashFinished }: SplashViewModelProps) => {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const { appName } = getEnvironment();
   const { splash } = getEnvironmentAssets();
