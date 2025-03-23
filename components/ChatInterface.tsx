@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useChatViewModel } from '../viewModels/useChatViewModel';
 import { Message } from '../models/types';
+import ConfirmationModal from './ConfirmationModal';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -22,9 +23,12 @@ const ChatInterface: React.FC = () => {
     sendLoading,
     sendMessage,
     setInputText,
-    exitRoom,
     profileData,
     roomData,
+    confirmExit,
+    handleExitPress,
+    isExitModalVisible,
+    cancelExit,
   } = useChatViewModel();
 
   const renderMessage = ({ item }: { item: Message }) => {
@@ -77,8 +81,8 @@ const ChatInterface: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{roomData?.roomName}</Text>
         <Text style={styles.welcomeText}>Logged in as: {profileData?.nickname}</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={exitRoom}>
-          <Text style={styles.logoutText}>Logout</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleExitPress}>
+          <Text style={styles.logoutText}>Exit Room</Text>
         </TouchableOpacity>
       </View>
 
@@ -120,6 +124,18 @@ const ChatInterface: React.FC = () => {
             <Text style={styles.sendButtonText}>Send</Text>
           </TouchableOpacity>
         </View>
+        <ConfirmationModal
+          visible={isExitModalVisible}
+          title="Exit Room"
+          message="Are you sure you want to exit this room?"
+          confirmText="Exit"
+          cancelText="Cancel"
+          confirmButtonColor="#dc3545"
+          headerColor="#007bff"
+          onConfirm={confirmExit}
+          onCancel={cancelExit}
+          destructive={true}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -151,6 +167,8 @@ const styles = StyleSheet.create({
     right: 16,
     top: 16,
     padding: 8,
+    backgroundColor: '#dc3545',
+    borderRadius: 10,
   },
   logoutText: {
     color: '#fff',

@@ -13,6 +13,7 @@ export function useChatViewModel() {
   const [loading, setLoading] = useState(true);
   const [sendLoading, setSendLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const [isExitModalVisible, setIsExitModalVisible] = useState(false);
 
   const profileData = useSelector((state: RootState) => state.profile.data);
   const roomData = useSelector((state: RootState) => state.room.data);
@@ -81,6 +82,19 @@ export function useChatViewModel() {
     dispatch(clearRoom());
   };
 
+  const handleExitPress = () => {
+    setIsExitModalVisible(true);
+  };
+
+  const confirmExit = () => {
+    setIsExitModalVisible(false);
+    exitRoom();
+  };
+
+  const cancelExit = () => {
+    setIsExitModalVisible(false);
+  };
+
   return {
     messages,
     inputText,
@@ -89,8 +103,11 @@ export function useChatViewModel() {
     sendLoading,
     flatListRef,
     sendMessage,
-    exitRoom,
     profileData,
-    roomData
+    roomData,
+    handleExitPress,
+    isExitModalVisible,
+    confirmExit,
+    cancelExit,
   };
 }

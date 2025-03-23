@@ -54,3 +54,16 @@ export interface MessageItemProps {
 export interface SplashScreenProps {
   setSplashFinished: (finished: boolean) => void;
 }
+
+export interface ConfirmationModalProps {
+  visible: boolean;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  confirmButtonColor?: string;
+  headerColor?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  destructive?: boolean;
+}
