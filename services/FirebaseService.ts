@@ -53,13 +53,12 @@ export class FirebaseService {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
-
     this.auth = getAuth(app);
 
     // Configure Google Sign-In
     GoogleSignin.configure({
       // The client ID on your Google Developer Console
-      webClientId: 'YOUR_WEB_CLIENT_ID', // Replace with your actual Web Client ID
+      webClientId: '1021405126924-d6n3jjbnjm1uartl76mvqa23op4ufbei.apps.googleusercontent.com', // Replace with your actual Web Client ID
     });
   }
 

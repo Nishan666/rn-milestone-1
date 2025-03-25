@@ -14,7 +14,7 @@ const MARQUEE_WIDTH = width * 0.5;
 
 type ImageSource = ImageRequireSource;
 
-type RoutePaths = 'login' | 'signup';
+type RoutePaths = '/login' | '/signup';
 interface Slide {
   title: string;
   subtitle1: string;
@@ -32,25 +32,25 @@ type RootStackParamList = {
 type NavigationProps = StackNavigationProp<RootStackParamList>;
 
 const allImages: ImageSource[] = [
-  require('../../assets/images/get-started/clothes-rack.png'),
-  require('../../assets/images/get-started/popcorn-bowl.png'),
-  require('../../assets/images/get-started/shoes.png'),
-  require('../../assets/images/get-started/red-coat.png'),
-  require('../../assets/images/get-started/chair.png'),
-  require('../../assets/images/get-started/avocado.png'),
-  require('../../assets/images/get-started/sunglasses.png'),
-  require('../../assets/images/get-started/rings.png'),
-  require('../../assets/images/get-started/dress.png'),
-  require('../../assets/images/get-started/necklace.png'),
-  require('../../assets/images/get-started/watch.png'),
-  require('../../assets/images/get-started/makeup.png'),
-  require('../../assets/images/get-started/orange-couch.png'),
-  require('../../assets/images/get-started/food-plate.png'),
-  require('../../assets/images/get-started/white-chair.png'),
-  require('../../assets/images/get-started/green-room.png'),
-  require('../../assets/images/get-started/bracelet.png'),
-  require('../../assets/images/get-started/footware.png'),
-  require('../../assets/images/get-started/white-table.png'),
+  require('../assets/images/get-started/clothes-rack.png'),
+  require('../assets/images/get-started/popcorn-bowl.png'),
+  require('../assets/images/get-started/shoes.png'),
+  require('../assets/images/get-started/red-coat.png'),
+  require('../assets/images/get-started/chair.png'),
+  require('../assets/images/get-started/avocado.png'),
+  require('../assets/images/get-started/sunglasses.png'),
+  require('../assets/images/get-started/rings.png'),
+  require('../assets/images/get-started/dress.png'),
+  require('../assets/images/get-started/necklace.png'),
+  require('../assets/images/get-started/watch.png'),
+  require('../assets/images/get-started/makeup.png'),
+  require('../assets/images/get-started/orange-couch.png'),
+  require('../assets/images/get-started/food-plate.png'),
+  require('../assets/images/get-started/white-chair.png'),
+  require('../assets/images/get-started/green-room.png'),
+  require('../assets/images/get-started/bracelet.png'),
+  require('../assets/images/get-started/footware.png'),
+  require('../assets/images/get-started/white-table.png'),
 ];
 
 const slides: Slide[] = [
@@ -59,21 +59,21 @@ const slides: Slide[] = [
     subtitle1: 'Easily connect your store to customers',
     subtitle2: 'and boost sales.',
     buttonText: 'Get Started',
-    redirectTo: 'login',
+    redirectTo: '/login',
   },
   {
     title: 'Welcome',
     subtitle1: 'Showcase exclusive deals and discounts',
     subtitle2: 'to attract more customers.',
     buttonText: 'Login In',
-    redirectTo: 'signup',
+    redirectTo: '/signup',
   },
   {
     title: 'Manage with Ease',
     subtitle1: 'Update offers and deals on the go,',
     subtitle2: 'anytime, anywhere.',
     buttonText: 'Sign Up',
-    redirectTo: 'signup',
+    redirectTo: '/signup',
   },
 ];
 

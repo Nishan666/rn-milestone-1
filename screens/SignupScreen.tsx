@@ -16,6 +16,8 @@ const SignupScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const firebaseService = FirebaseService.getInstance();
+
   const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'All fields are required');
@@ -29,21 +31,19 @@ const SignupScreen = () => {
 
     setLoading(true);
     try {
-      const user = await FirebaseService.signUp(name, email, password);
+      const user = await firebaseService.signUp(email, password);
       
       await AsyncStorage.setItem('user', JSON.stringify({
         uid: user.uid,
         email: user.email,
-        name: user.displayName
       }));
 
       dispatch(setUser({
         uid: user.uid,
         email: user.email!,
-        name: user.displayName || ''
       }));
 
-      navigation.reset({ index: 0, routes: [{ name: 'Home' }]);
+      navigation.navigate('Home');
     } catch (error: any) {
       Alert.alert('Signup Error', error.message);
     } finally {

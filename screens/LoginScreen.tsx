@@ -21,11 +21,12 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const firebaseService = FirebaseService.getInstance();
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const user = await FirebaseService.signInWithGoogle();
+      const user = await firebaseService.signInWithGoogle();
 
       // Dispatch user to Redux store
       dispatch(
@@ -51,7 +52,7 @@ const LoginScreen = () => {
 
     setLoading(true);
     try {
-      const user = await FirebaseService.login(email, password);
+      const user = await firebaseService.login(email, password);
 
       await AsyncStorage.setItem(
         'user',
@@ -68,7 +69,7 @@ const LoginScreen = () => {
         }),
       );
 
-      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+      navigation.navigate('Home');
     } catch (error: any) {
       Alert.alert('Login Error', error.message);
     } finally {

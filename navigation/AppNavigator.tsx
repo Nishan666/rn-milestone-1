@@ -14,7 +14,6 @@ import ImageUploadScreen from '../screens/ImageUploadScreen';
 import GetStartedScreen from '../screens/GetStartedScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
-import OTPScreen from '../screens/OTPScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -94,26 +93,26 @@ const ImageUploadStack = () => (
 const AppNavigator = () => {
 
   //
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const [loading, setLoading] = useState(true);
+  // const dispatch = useDispatch();
+  // const user = useSelector((state: RootState) => state.auth.user);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        dispatch(setUser({
-          uid: user.uid,
-          email: user.email,
-        }));
-      } else {
-        dispatch(clearUser());
-      }
-      setLoading(false);
-    });
+  // useEffect(() => {
+  //   const auth = getAuth();
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       dispatch(setUser({
+  //         uid: user.uid,
+  //         email: user.email,
+  //       }));
+  //     } else {
+  //       dispatch(clearUser());
+  //     }
+  //     setLoading(false);
+  //   });
 
-    return unsubscribe; // Unsubscribe on unmount
-  }, []);
+  //   return unsubscribe; // Unsubscribe on unmount
+  // }, []);
 
 
   // 
@@ -122,7 +121,7 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      {!user ? (
+      {true ? (
         <Stack.Navigator
           initialRouteName="GetStarted"
           screenOptions={{
@@ -132,7 +131,6 @@ const AppNavigator = () => {
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
-          <Stack.Screen name="OTP" component={OTPScreen} />
         </Stack.Navigator>
       ) : (
         <Drawer.Navigator
