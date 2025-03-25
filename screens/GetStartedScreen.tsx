@@ -1,28 +1,20 @@
-import MarqueeColumn from "../components/MarqueeColumn";
-import React, { useState, useMemo, useRef } from "react";
-import {
-  View,
-  Dimensions,
-  StyleSheet,
-  ImageRequireSource,
-  Text,
-  StatusBar,
-} from "react-native";
-import Carousel from "react-native-reanimated-carousel";
-import { LinearGradient } from "expo-linear-gradient";
-import { Button } from "../components/Button";
-import { useNavigation } from "@react-navigation/native";
-const { width, height } = Dimensions.get("screen");
+import MarqueeColumn from '../components/MarqueeColumn';
+import React, { useState, useMemo, useRef } from 'react';
+import { View, Dimensions, StyleSheet, ImageRequireSource, Text, StatusBar } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Button } from '../components/Button';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+const { width, height } = Dimensions.get('screen');
 const TOP_CONTAINER_HEIGHT = height * 0.715;
 const BOTTOM_CONTAINER_HEIGHT = height * 0.285;
-
-const navigate = useNavigation().navigate;
 
 const MARQUEE_WIDTH = width * 0.5;
 
 type ImageSource = ImageRequireSource;
 
-type RoutePaths = "/signin" | "/signup";
+type RoutePaths = 'login' | 'signup';
 interface Slide {
   title: string;
   subtitle1: string;
@@ -31,55 +23,63 @@ interface Slide {
   redirectTo: RoutePaths;
 }
 
+
+type RootStackParamList = {
+  login: undefined;
+  signup: undefined;
+};
+
+type NavigationProps = StackNavigationProp<RootStackParamList>;
+
 const allImages: ImageSource[] = [
-  require("../../assets/images/get-started/clothes-rack.png"),
-  require("../../assets/images/get-started/popcorn-bowl.png"),
-  require("../../assets/images/get-started/shoes.png"),
-  require("../../assets/images/get-started/red-coat.png"),
-  require("../../assets/images/get-started/chair.png"),
-  require("../../assets/images/get-started/avocado.png"),
-  require("../../assets/images/get-started/sunglasses.png"),
-  require("../../assets/images/get-started/rings.png"),
-  require("../../assets/images/get-started/dress.png"),
-  require("../../assets/images/get-started/necklace.png"),
-  require("../../assets/images/get-started/watch.png"),
-  require("../../assets/images/get-started/makeup.png"),
-  require("../../assets/images/get-started/orange-couch.png"),
-  require("../../assets/images/get-started/food-plate.png"),
-  require("../../assets/images/get-started/white-chair.png"),
-  require("../../assets/images/get-started/green-room.png"),
-  require("../../assets/images/get-started/bracelet.png"),
-  require("../../assets/images/get-started/footware.png"),
-  require("../../assets/images/get-started/white-table.png"),
+  require('../../assets/images/get-started/clothes-rack.png'),
+  require('../../assets/images/get-started/popcorn-bowl.png'),
+  require('../../assets/images/get-started/shoes.png'),
+  require('../../assets/images/get-started/red-coat.png'),
+  require('../../assets/images/get-started/chair.png'),
+  require('../../assets/images/get-started/avocado.png'),
+  require('../../assets/images/get-started/sunglasses.png'),
+  require('../../assets/images/get-started/rings.png'),
+  require('../../assets/images/get-started/dress.png'),
+  require('../../assets/images/get-started/necklace.png'),
+  require('../../assets/images/get-started/watch.png'),
+  require('../../assets/images/get-started/makeup.png'),
+  require('../../assets/images/get-started/orange-couch.png'),
+  require('../../assets/images/get-started/food-plate.png'),
+  require('../../assets/images/get-started/white-chair.png'),
+  require('../../assets/images/get-started/green-room.png'),
+  require('../../assets/images/get-started/bracelet.png'),
+  require('../../assets/images/get-started/footware.png'),
+  require('../../assets/images/get-started/white-table.png'),
 ];
 
 const slides: Slide[] = [
   {
-    title: "Welcome to Reistta!",
-    subtitle1: "Easily connect your store to customers",
-    subtitle2: "and boost sales.",
-    buttonText: "Get Started",
-    redirectTo: "/signin",
+    title: 'Welcome',
+    subtitle1: 'Easily connect your store to customers',
+    subtitle2: 'and boost sales.',
+    buttonText: 'Get Started',
+    redirectTo: 'login',
   },
   {
-    title: "Promote Your Offers!",
-    subtitle1: "Showcase exclusive deals and discounts",
-    subtitle2: "to attract more customers.",
-    buttonText: "Login In",
-    redirectTo: "/signin",
+    title: 'Welcome',
+    subtitle1: 'Showcase exclusive deals and discounts',
+    subtitle2: 'to attract more customers.',
+    buttonText: 'Login In',
+    redirectTo: 'signup',
   },
   {
-    title: "Manage with Ease",
-    subtitle1: "Update offers and deals on the go,",
-    subtitle2: "anytime, anywhere.",
-    buttonText: "Sign Up",
-    redirectTo: "/signup",
+    title: 'Manage with Ease',
+    subtitle1: 'Update offers and deals on the go,',
+    subtitle2: 'anytime, anywhere.',
+    buttonText: 'Sign Up',
+    redirectTo: 'signup',
   },
 ];
 
 function shuffleArray(array: ImageSource[]) {
   return array
-    .map((value) => ({ value, sort: Math.random() }))
+    .map(value => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
 }
@@ -89,6 +89,7 @@ const PageIndicator: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 const GetStarted: React.FC = () => {
+  const navigation = useNavigation<NavigationProps>();
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
 
@@ -98,7 +99,7 @@ const GetStarted: React.FC = () => {
       [shuffleArray([...allImages]), shuffleArray([...allImages])],
       [shuffleArray([...allImages]), shuffleArray([...allImages])],
     ],
-    []
+    [],
   );
 
   const carouselData = slides.map((_, pageIndex) => (
@@ -146,13 +147,13 @@ const GetStarted: React.FC = () => {
         />
 
         <LinearGradient
-          colors={["transparent", "rgba(255,255,255,1.0)"]}
+          colors={['transparent', 'rgba(255,255,255,1.0)']}
           style={styles.gradient}
           pointerEvents="none"
         />
         <View style={styles.bottomPart}>
           <View style={styles.paginationContainer}>
-            {[0, 1, 2].map((index) => (
+            {[0, 1, 2].map(index => (
               <PageIndicator key={index} active={index === safeActiveIndex} />
             ))}
           </View>
@@ -162,8 +163,7 @@ const GetStarted: React.FC = () => {
             <Text style={styles.subtitle}>{currentSlide.subtitle2}</Text>
             <Button
               style={styles.button}
-              onPress={() => navigate(currentSlide.redirectTo)}
-            >
+              onPress={() => navigation.navigate(currentSlide.redirectTo)}>
               {currentSlide.buttonText}
             </Button>
           </View>
@@ -179,27 +179,27 @@ const styles = StyleSheet.create({
   },
   marqueesContainer: {
     height: TOP_CONTAINER_HEIGHT,
-    flexDirection: "row",
+    flexDirection: 'row',
     width: width,
   },
   marqueeWrapper: {
     width: MARQUEE_WIDTH,
     height: TOP_CONTAINER_HEIGHT,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   paginationContainer: {
     marginTop: 12,
     marginBottom: 24,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   gradient: {
-    position: "absolute",
-    bottom: "26.5%",
+    position: 'absolute',
+    bottom: '26.5%',
     height: 100,
-    width: "110%",
+    width: '110%',
   },
   dot: {
     width: 4,
@@ -211,20 +211,20 @@ const styles = StyleSheet.create({
     width: 38,
   },
   inactiveDot: {
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#D9D9D9',
   },
   textContentContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   bottomPart: {
-    height: BOTTOM_CONTAINER_HEIGHT
+    height: BOTTOM_CONTAINER_HEIGHT,
   },
   title: {
-    fontWeight: "600",
+    fontWeight: '600',
     paddingBottom: 4,
   },
   subtitle: {
-    fontWeight: "400",
+    fontWeight: '400',
   },
   button: {
     marginTop: 24,

@@ -16,6 +16,16 @@ import {
 } from 'firebase/firestore';
 import { Message } from '../models/types';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  Auth,
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithCredential,
+  User,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export interface Room {
   id: string;
@@ -27,6 +37,7 @@ export interface Room {
 export class FirebaseService {
   private static instance: FirebaseService;
   private db: Firestore;
+  private auth: Auth;
 
   constructor() {
     // Firebase configuration
@@ -42,6 +53,14 @@ export class FirebaseService {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
+
+    this.auth = getAuth(app);
+
+    // Configure Google Sign-In
+    GoogleSignin.configure({
+      // The client ID on your Google Developer Console
+      webClientId: 'YOUR_WEB_CLIENT_ID', // Replace with your actual Web Client ID
+    });
   }
 
   // Singleton pattern to ensure only one instance of the service exists
@@ -171,5 +190,92 @@ export class FirebaseService {
       userName: data.userName || 'Anonymous',
       roomId: data.roomId,
     } as Message;
+  }
+
+  // auth
+  async signUp(email: string, password: string): Promise<User> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      return userCredential.user;
+    } catch (error: any) {
+      console.error('Signup Error:', error);
+
+      // Handle specific Firebase auth errors
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('Email is already registered');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Invalid email address');
+      } else if (error.code === 'auth/weak-password') {
+        throw new Error('Password is too weak');
+      }
+
+      throw error;
+    }
+  }
+
+  // Email/Password Login
+  async login(email: string, password: string): Promise<User> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      return userCredential.user;
+    } catch (error: any) {
+      console.error('Login Error:', error);
+
+      // Handle specific Firebase auth errors
+      if (error.code === 'auth/user-not-found') {
+        throw new Error('No user found with this email');
+      } else if (error.code === 'auth/wrong-password') {
+        throw new Error('Incorrect password');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Invalid email address');
+      }
+
+      throw error;
+    }
+  }
+
+  // Google Sign-In
+  async signInWithGoogle(): Promise<User> {
+    try {
+      // Perform Google Sign-In
+      await GoogleSignin.hasPlayServices();
+      const { data } = await GoogleSignin.signIn();
+
+      // Create a Google credential with the tokens
+      const credential = GoogleAuthProvider.credential(data?.idToken);
+
+      // Sign in with credential
+      const userCredential = await signInWithCredential(this.auth, credential);
+
+      return userCredential.user;
+    } catch (error: any) {
+      console.error('Google Sign-In Error:', error);
+
+      // Handle specific Google Sign-In errors
+      if (error.code === 'auth/invalid-credential') {
+        throw new Error('Invalid Google credentials');
+      }
+
+      throw error;
+    }
+  }
+
+  // Sign Out
+  async signOut(): Promise<void> {
+    try {
+      // Sign out from Firebase
+      await this.auth.signOut();
+
+      // If using Google Sign-In, also sign out from Google
+      await GoogleSignin.signOut();
+    } catch (error) {
+      console.error('Sign Out Error:', error);
+      throw error;
+    }
+  }
+
+  // Get Current User
+  getCurrentUser(): User | null {
+    return this.auth.currentUser;
   }
 }
