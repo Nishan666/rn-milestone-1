@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useProfileViewModel } from '../viewModels/useProfileViewModel';
 
 const ProfileScreen = () => {
@@ -14,9 +14,9 @@ const ProfileScreen = () => {
         <View
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={styles.value}>{profile?.nickname}</Text>
-          <TouchableOpacity style={styles.button} onPress={handleEdit}>
+          <Pressable style={styles.button} onPress={handleEdit}>
             <Text>{profile?.nickname ? 'Edit' : 'Create'}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <Text style={styles.label}>Email</Text>
         <Text style={styles.value}>{profile?.email}</Text>

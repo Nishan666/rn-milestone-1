@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -33,21 +33,21 @@ const RoomForm: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Welcome!</Text>
         <View style={styles.roomOptions}>
-          <TouchableOpacity
+          <Pressable
             style={[styles.option, createNewRoom ? styles.selectedOption : null]}
             onPress={() => setCreateNewRoom(true)}>
             <Text style={createNewRoom ? styles.selectedOptionText : styles.optionText}>
               Create New Room
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={[styles.option, !createNewRoom ? styles.selectedOption : null]}
             onPress={() => setCreateNewRoom(false)}>
             <Text style={!createNewRoom ? styles.selectedOptionText : styles.optionText}>
               Join Existing Room
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {createNewRoom ? (
@@ -72,7 +72,7 @@ const RoomForm: React.FC = () => {
             ) : existingRooms.length > 0 ? (
               <View style={styles.roomList}>
                 {existingRooms.map(room => (
-                  <TouchableOpacity
+                  <Pressable
                     key={room.id}
                     style={[
                       styles.roomItem,
@@ -87,7 +87,7 @@ const RoomForm: React.FC = () => {
                       }>
                       {room.name}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
             ) : (
@@ -97,9 +97,9 @@ const RoomForm: React.FC = () => {
           </View>
         )}
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Pressable style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Save & Continue</Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

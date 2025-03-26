@@ -7,13 +7,13 @@ import { loadProfile } from '../store/slices/profileSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, BackHandler } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { set } from 'react-hook-form';
 
 export const useMainModel = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [splashFinished, setSplashFinished] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [authFailed, setAuthFailed] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
   // Load custom fonts and assets
@@ -41,7 +41,6 @@ export const useMainModel = () => {
     const biometricEnabled = await AsyncStorage.getItem('biometrics');
 
     if (biometricEnabled === 'true') {
-      // Check if the device supports authentication
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
@@ -51,32 +50,43 @@ export const useMainModel = () => {
         return;
       }
 
-      // Prompt for biometrics with fallback to device PIN/password
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: 'Authenticate to continue',
         fallbackLabel: 'Use device passcode',
-        disableDeviceFallback: false, // Allow fallback to PIN/password
+        disableDeviceFallback: false,
       });
 
       if (result.success) {
         console.log('Authentication successful');
         setAuthenticated(true);
+        setAuthFailed(false);
       } else {
         console.log('Authentication failed');
+        setAuthFailed(true); // Set failure flag
         Alert.alert(
           'Authentication Failed',
-          'Please authenticate to continue.',
+          'Would you like to try again?',
           [
             {
-              text: 'OK',
+              text: 'Retry',
+              onPress: retryAuthentication,
+            },
+            {
+              text: 'Exit',
               onPress: () => BackHandler.exitApp(),
             },
           ],
           { cancelable: false },
         );
       }
-    }else{
-      setAuthenticated(true);}
+    } else {
+      setAuthenticated(true);
+    }
+  };
+
+  const retryAuthentication = async () => {
+    setAuthFailed(false);
+    await checkUserLoggedIn();
   };
 
   useEffect(() => {
@@ -88,6 +98,6 @@ export const useMainModel = () => {
     splashFinished,
     assetsLoaded,
     setSplashFinished,
-    authenticated
+    authenticated,
   };
 };

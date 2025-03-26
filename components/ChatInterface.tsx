@@ -4,7 +4,7 @@ import {
   Text,
   TextInput,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -81,9 +81,9 @@ const ChatInterface: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{roomData?.roomName}</Text>
         <Text style={styles.welcomeText}>Logged in as: {profileData?.nickname}</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleExitPress}>
+        <Pressable style={styles.logoutButton} onPress={handleExitPress}>
           <Text style={styles.logoutText}>Exit Room</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <KeyboardAvoidingView
@@ -114,7 +114,7 @@ const ChatInterface: React.FC = () => {
             placeholder="Type a message..."
             multiline
           />
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.sendButton,
               inputText.trim() === '' || sendLoading ? styles.sendButtonDisabled : null,
@@ -122,7 +122,7 @@ const ChatInterface: React.FC = () => {
             onPress={sendMessage}
             disabled={inputText.trim() === '' || sendLoading}>
             <Text style={styles.sendButtonText}>Send</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <ConfirmationModal
           visible={isExitModalVisible}

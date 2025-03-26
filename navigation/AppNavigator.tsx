@@ -16,8 +16,11 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { clearUser, setUser } from '../store/slices/authSlice';
+import { FirebaseService } from '../services/FirebaseService';
+import { ActivityIndicator, View } from 'react-native';
+import { saveProfile } from '../store/slices/profileSlice';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -83,7 +86,7 @@ const AboutStack = () => (
 const ImageUploadStack = () => (
   <Stack.Navigator screenOptions={screenOptions}>
     <Stack.Screen
-      name="Image Upload"
+      name="Image-Upload"
       component={ImageUploadScreen}
       options={({ navigation }) => ({ headerLeft: () => <MenuButton navigation={navigation} /> })}
     />
@@ -91,37 +94,42 @@ const ImageUploadStack = () => (
 );
 
 const AppNavigator = () => {
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const authUser = useSelector((state: RootState) => state.auth.user);
+  useEffect(() => {
+    const auth = FirebaseService.getInstance().getAuthInstance();
+    const unsubscribe = onAuthStateChanged(auth, currentUser => {
+      setUser(currentUser);
+      console.log('User:', currentUser);
+      if (currentUser) {
+        const userData = {
+          uid: currentUser.uid,
+          email: currentUser.email,
+        };
+        dispatch(setUser(userData));
+        if (currentUser.email) {
+            dispatch(saveProfile({ email: currentUser.email, nickname: '' }) as any);
+        }
+      } else {
+        dispatch(clearUser());
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
 
-  //
-  // const dispatch = useDispatch();
-  // const user = useSelector((state: RootState) => state.auth.user);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const auth = getAuth();
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       dispatch(setUser({
-  //         uid: user.uid,
-  //         email: user.email,
-  //       }));
-  //     } else {
-  //       dispatch(clearUser());
-  //     }
-  //     setLoading(false);
-  //   });
-
-  //   return unsubscribe; // Unsubscribe on unmount
-  // }, []);
-
-
-  // 
-
-
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
-      {true ? (
+      {!authUser ? (
         <Stack.Navigator
           initialRouteName="GetStarted"
           screenOptions={{

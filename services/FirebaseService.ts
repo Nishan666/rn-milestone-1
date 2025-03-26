@@ -18,14 +18,19 @@ import { Message } from '../models/types';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Auth,
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithCredential,
   User,
   GoogleAuthProvider,
+  initializeAuth,
 } from 'firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import * as firebaseAuth from 'firebase/auth';       
+const reactNativePersistence = (firebaseAuth as any).getReactNativePersistence;
+        
 
 export interface Room {
   id: string;
@@ -53,7 +58,9 @@ export class FirebaseService {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
-    this.auth = getAuth(app);
+    this.auth = initializeAuth(app, {
+      persistence: reactNativePersistence(AsyncStorage),
+    });
 
     // Configure Google Sign-In
     GoogleSignin.configure({
@@ -276,5 +283,13 @@ export class FirebaseService {
   // Get Current User
   getCurrentUser(): User | null {
     return this.auth.currentUser;
+  }
+
+    getAuthInstance(): Auth {
+    return this.auth;
+  }
+
+  getFirestoreInstance(): Firestore {
+    return this.db;
   }
 }

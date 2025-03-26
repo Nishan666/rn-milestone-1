@@ -14,19 +14,17 @@ const MARQUEE_WIDTH = width * 0.5;
 
 type ImageSource = ImageRequireSource;
 
-type RoutePaths = '/login' | '/signup';
 interface Slide {
   title: string;
   subtitle1: string;
   subtitle2: string;
   buttonText: string;
-  redirectTo: RoutePaths;
+  redirectTo: keyof RootStackParamList;
 }
 
-
 type RootStackParamList = {
-  login: undefined;
-  signup: undefined;
+  Login: undefined;
+  Signup: undefined;
 };
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
@@ -59,21 +57,21 @@ const slides: Slide[] = [
     subtitle1: 'Easily connect your store to customers',
     subtitle2: 'and boost sales.',
     buttonText: 'Get Started',
-    redirectTo: '/login',
+    redirectTo: 'Login',
   },
   {
     title: 'Welcome',
     subtitle1: 'Showcase exclusive deals and discounts',
     subtitle2: 'to attract more customers.',
     buttonText: 'Login In',
-    redirectTo: '/signup',
+    redirectTo: 'Signup',
   },
   {
     title: 'Manage with Ease',
     subtitle1: 'Update offers and deals on the go,',
     subtitle2: 'anytime, anywhere.',
     buttonText: 'Sign Up',
-    redirectTo: '/signup',
+    redirectTo: 'Signup',
   },
 ];
 

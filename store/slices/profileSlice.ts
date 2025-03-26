@@ -45,6 +45,25 @@ export const clearProfile = createAsyncThunk(
   }
 );
 
+export const clearNickname = createAsyncThunk(
+  'profile/clearNickname',
+  async (_, { rejectWithValue }) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('profileData');
+      if (!jsonValue) return rejectWithValue('No profile data found');
+
+      const profileData = JSON.parse(jsonValue);
+      const updatedProfile = { ...profileData, nickname: '' }; // Clear only nickname
+
+      await AsyncStorage.setItem('profileData', JSON.stringify(updatedProfile));
+      return updatedProfile;
+    } catch (error) {
+      return rejectWithValue('Failed to clear nickname');
+    }
+  }
+);
+
+
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
@@ -67,6 +86,9 @@ const profileSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(clearProfile.fulfilled, (state) => {
+        state.data = null;
+      })
+      .addCase(clearNickname.fulfilled, (state) => {
         state.data = null;
       });
   },

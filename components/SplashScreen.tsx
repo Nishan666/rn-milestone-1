@@ -1,10 +1,12 @@
 // components/SplashScreen.js
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { useSplashViewModel } from '../viewModels/useSplashViewModel';
 import { SplashScreenProps } from '../models/types';
 
-const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished , authenticated }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({
+  setSplashFinished,
+}) => {
   const { appName, loadingProgress, splash } = useSplashViewModel({ setSplashFinished });
   return (
     <View style={styles.splashContainer}>
@@ -14,7 +16,6 @@ const SplashScreen : React.FC<SplashScreenProps> = ({ setSplashFinished , authen
         <View style={[styles.progressBar, { width: `${loadingProgress * 100}%` }]} />
       </View>
       <Text style={styles.loadingText}>Loading... {Math.floor(loadingProgress * 100)}%</Text>
-      <Text style={styles.authfailedText}>{!authenticated && 'Not Authenticated'}</Text>
     </View>
   );
 };

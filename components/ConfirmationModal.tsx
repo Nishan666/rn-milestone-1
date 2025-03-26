@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
 import { ConfirmationModalProps } from '../models/types';
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -27,11 +27,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </View>
 
           <View style={styles.modalFooter}>
-            <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={onCancel}>
+            <Pressable style={[styles.modalButton, styles.cancelButton]} onPress={onCancel}>
               <Text style={styles.cancelButtonText}>{cancelText}</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.modalButton,
                 styles.confirmButton,
@@ -41,7 +41,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               <Text style={[styles.confirmButtonText, { color: confirmButtonColor }]}>
                 {confirmText}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

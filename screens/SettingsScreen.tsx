@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Switch, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
@@ -70,9 +70,9 @@ const SettingsScreen: React.FC = () => {
         />
       </View>
 
-      <TouchableOpacity style={styles.button}>
+      <Pressable style={styles.button}>
         <Text style={styles.buttonText}>Reset Settings</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

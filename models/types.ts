@@ -53,7 +53,6 @@ export interface MessageItemProps {
 
 export interface SplashScreenProps {
   setSplashFinished: (finished: boolean) => void;
-  authenticated: boolean;
 }
 
 export interface SplashViewModelProps {

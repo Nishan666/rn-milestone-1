@@ -8,7 +8,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput, Pressable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/slices/authSlice';
@@ -35,8 +35,7 @@ const LoginScreen = () => {
           email: user.email,
         }),
       );
-
-      navigation.navigate('Home');
+      (navigation as any).navigate('Home');
     } catch (error: any) {
       Alert.alert('Google Sign-In Error', error.message);
     } finally {
@@ -69,7 +68,7 @@ const LoginScreen = () => {
         }),
       );
 
-      navigation.navigate('Home');
+      (navigation as any).navigate('Home');
     } catch (error: any) {
       Alert.alert('Login Error', error.message);
     } finally {
@@ -101,24 +100,24 @@ const LoginScreen = () => {
           onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
           <Text style={styles.buttonText}>{loading ? 'Logging In...' : 'Login'}</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={styles.button}
           onPress={() => handleGoogleSignIn()}
           disabled={loading}>
           <Text>{loading ? 'Signing In...' : 'Continue with Google'}</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Signup')}
+        <Pressable
+          onPress={() => (navigation as any).navigate('Signup')}
           style={styles.switchContainer}>
           <Text style={styles.switchText}>
             Don't have an account? <Text style={styles.switchLink}>Sign Up</Text>
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

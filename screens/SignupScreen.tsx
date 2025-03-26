@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput, Pressable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/slices/authSlice';
@@ -43,7 +43,7 @@ const SignupScreen = () => {
         email: user.email!,
       }));
 
-      navigation.navigate('Home');
+      (navigation as any).navigate('Home');
     } catch (error: any) {
       Alert.alert('Signup Error', error.message);
     } finally {
@@ -92,7 +92,7 @@ const SignupScreen = () => {
           onChangeText={setConfirmPassword}
         />
 
-        <TouchableOpacity
+        <Pressable
           style={styles.button}
           onPress={handleSignup}
           disabled={loading}
@@ -100,16 +100,16 @@ const SignupScreen = () => {
           <Text style={styles.buttonText}>
             {loading ? 'Creating Account...' : 'Sign Up'}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
+        <Pressable
+          onPress={() => (navigation as any).navigate('Login')}
           style={styles.switchContainer}
         >
           <Text style={styles.switchText}>
             Already have an account? <Text style={styles.switchLink}>Login</Text>
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

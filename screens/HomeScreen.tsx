@@ -18,7 +18,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {profileData === null ? (
+      {profileData?.nickname === '' ? (
         <NicknameForm />
       ) : roomData === null ? (
         <RoomForm />
