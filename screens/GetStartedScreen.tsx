@@ -53,27 +53,28 @@ const allImages: ImageSource[] = [
 
 const slides: Slide[] = [
   {
-    title: 'Welcome',
-    subtitle1: 'Easily connect your store to customers',
-    subtitle2: 'and boost sales.',
+    title: 'Welcome to ChatApp',
+    subtitle1: 'Connect instantly with friends,',
+    subtitle2: 'family, and colleagues.',
     buttonText: 'Get Started',
     redirectTo: 'Login',
   },
   {
-    title: 'Welcome',
-    subtitle1: 'Showcase exclusive deals and discounts',
-    subtitle2: 'to attract more customers.',
-    buttonText: 'Login In',
+    title: 'Secure Messaging',
+    subtitle1: 'Your conversations are encrypted,',
+    subtitle2: 'ensuring privacy and security.',
+    buttonText: 'Login',
     redirectTo: 'Signup',
   },
   {
-    title: 'Manage with Ease',
-    subtitle1: 'Update offers and deals on the go,',
-    subtitle2: 'anytime, anywhere.',
+    title: 'Stay Connected',
+    subtitle1: 'Send messages, photos, and videos',
+    subtitle2: 'with lightning speed.',
     buttonText: 'Sign Up',
     redirectTo: 'Signup',
   },
 ];
+
 
 function shuffleArray(array: ImageSource[]) {
   return array
@@ -202,16 +203,20 @@ const styles = StyleSheet.create({
   dot: {
     width: 4,
     height: 4,
-    borderRadius: 4,
+    borderRadius: 10,
     marginHorizontal: 5,
   },
   activeDot: {
     width: 38,
+    backgroundColor: '#D9D9D9',
+
   },
   inactiveDot: {
     backgroundColor: '#D9D9D9',
   },
   textContentContainer: {
+    marginTop: 18,
+    width: '100%',
     alignItems: 'center',
   },
   bottomPart: {
