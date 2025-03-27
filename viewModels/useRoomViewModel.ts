@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from '../store';
 import { saveRoom } from '../store/slices/roomSlice';
 import { FirebaseService, Room } from '../services/FirebaseService';
 import { set } from 'react-hook-form';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useRoomViewModel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -79,6 +80,8 @@ export const useRoomViewModel = () => {
       }
       
       if (!roomData) return;
+      const token = await AsyncStorage.getItem('fcmToken');
+      await firebaseService.saveUserFCMTokenForRoom(roomData.id, profileData?.email || '', profileData?.email || '', token || '');
       
       dispatch(
         saveRoom({
@@ -86,6 +89,7 @@ export const useRoomViewModel = () => {
           roomName: roomData.name,
         }),
       );
+      
     } catch (error) {
       console.error('Error handling room submission:', error);
       setErrors(prev => ({ ...prev, room: 'Failed to process room' }));

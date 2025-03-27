@@ -32,6 +32,8 @@ export function useChatViewModel() {
 
     const firebaseService = FirebaseService.getInstance();
 
+    const RoomParticipant = firebaseService.getRoomParticipants(roomData.roomId);
+
     // Set up listener for messages using the Firebase service
     const unsubscribe = firebaseService.listenToMessages(
       roomData.roomId,
@@ -70,6 +72,12 @@ export function useChatViewModel() {
         currentUser?.id,
         currentUser.name,
         roomData?.roomId,
+      );
+      FirebaseService.getInstance().sendPushNotificationToRoomParticipants(
+        roomData?.roomId,
+        currentUser?.id,
+        currentUser.name,
+        inputTextMessage,
       );
       setSendLoading(false);
     } catch (error) {

@@ -35,7 +35,9 @@ const LoginScreen = () => {
           email: user.email,
         }),
       );
-      (navigation as any).navigate('Home');
+      const token = await firebaseService.requestFCMToken();
+      console.log('FCM Token:', token);
+      (navigation as any).navigate('HomeStack');
     } catch (error: any) {
       Alert.alert('Google Sign-In Error', error.message);
     } finally {
@@ -67,8 +69,9 @@ const LoginScreen = () => {
           email: user.email!,
         }),
       );
-
-      (navigation as any).navigate('Home');
+      const token = await firebaseService.requestFCMToken();
+      console.log('FCM Token:', token);
+      (navigation as any).navigate('HomeStack');
     } catch (error: any) {
       Alert.alert('Login Error', error.message);
     } finally {

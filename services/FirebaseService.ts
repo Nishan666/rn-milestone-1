@@ -13,8 +13,12 @@ import {
   Firestore,
   DocumentData,
   QueryDocumentSnapshot,
+  doc,
+  setDoc,
+  updateDoc,
+  getDoc,
 } from 'firebase/firestore';
-import { Message } from '../models/types';
+import { getMessaging, getToken } from '@react-native-firebase/messaging';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Auth,
@@ -37,12 +41,21 @@ export interface Room {
   name: string;
   createdAt?: string;
   createdBy?: string;
+  participants?: string[]
+}
+
+export interface RoomParticipant {
+  userId: string;
+  email: string;
+  fcmToken: string;
+  lastEnteredAt: string;
 }
 
 export class FirebaseService {
   private static instance: FirebaseService;
   private db: Firestore;
   private auth: Auth;
+  private messaging: any
 
   constructor() {
     // Firebase configuration
@@ -58,6 +71,7 @@ export class FirebaseService {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     this.db = getFirestore(app);
+    this.messaging = getMessaging(app);
     this.auth = initializeAuth(app, {
       persistence: reactNativePersistence(AsyncStorage),
     });
@@ -161,7 +175,8 @@ export class FirebaseService {
       const now = new Date();
 
       // Add new message to Firestore
-      await addDoc(collection(this.db, 'messages'), {
+      // Add new message to Firestore
+      const messageRef = await addDoc(collection(this.db, 'messages'), {
         id: uuidv4(),
         text: text,
         createdAt: serverTimestamp(),
@@ -170,6 +185,14 @@ export class FirebaseService {
         userName: userName,
         roomId: roomId,
       });
+
+      // Send push notifications to room participants
+      await this.sendPushNotificationToRoomParticipants(
+        roomId, 
+        userId, 
+        userName, 
+        text
+      );
     } catch (error) {
       console.error('Error sending message: ', error);
       throw error;
@@ -291,5 +314,103 @@ export class FirebaseService {
 
   getFirestoreInstance(): Firestore {
     return this.db;
+  }
+
+
+  //notifications
+  async saveUserFCMTokenForRoom(roomId: string, userId: string, email: string, fcmToken: string): Promise<void> {
+    try {
+      const participantRef = doc(this.db, 'rooms', roomId, 'participants', userId);
+      await setDoc(participantRef, {
+        userId,
+        email,
+        fcmToken,
+        lastEnteredAt: new Date().toISOString()
+      }, { merge: true });
+
+      // Update room's participants list
+      const roomRef = doc(this.db, 'rooms', roomId);
+      await updateDoc(roomRef, {
+        participants: Array.from(new Set([...(await this.getRoomParticipants(roomId)), email]))
+      });
+    } catch (error) {
+      console.error('Error saving FCM token:', error);
+      throw error;
+    }
+  }
+
+  // Get room participants
+  async getRoomParticipants(roomId: string): Promise<string[]> {
+    try {
+      const roomDoc = await getDoc(doc(this.db, 'rooms', roomId));
+      return roomDoc.data()?.participants || [];
+    } catch (error) {
+      console.error('Error getting room participants:', error);
+      return [];
+    }
+  }
+
+  // Send push notification to room participants
+  async sendPushNotificationToRoomParticipants(
+    roomId: string, 
+    senderId: string, 
+    senderName: string, 
+    messageText: string
+  ): Promise<void> {
+    try {
+      // Get participants for this room
+      const participantsCollection = collection(this.db, 'rooms', roomId, 'participants');
+      const participantsSnapshot = await getDocs(participantsCollection);
+
+      // Prepare notification payload
+      const notificationPayload = {
+        notification: {
+          title: `New message in ${senderName}`,
+          body: messageText,
+        },
+        data: {
+          roomId,
+          senderId,
+          messageText
+        }
+      };
+
+      // Send notifications to each participant (excluding sender)
+      const notificationPromises = participantsSnapshot.docs
+        .filter(doc => doc.id !== senderId)
+        .map(async (participantDoc) => {
+          const participantData = participantDoc.data();
+          
+          // Here you would typically use a server-side solution or cloud function 
+          // to send FCM tokens. This is a simplified client-side approach.
+          if (participantData.fcmToken) {
+            try {
+                await this.messaging().sendMessage({
+                ...notificationPayload,
+                token: participantData.fcmToken
+                } as any);
+            } catch (error) {
+              console.error('Error sending notification to participant:', error);
+            }
+          }
+        });
+
+      await Promise.all(notificationPromises);
+    } catch (error) {
+      console.error('Error sending push notifications:', error);
+    }
+  }
+
+  async requestFCMToken(): Promise<string | null> {
+    try {
+      const token = await getToken(this.messaging)
+      if (token) {
+        await AsyncStorage.setItem('fcmToken', token);
+      }
+      return token;
+    } catch (error) {
+      console.error('Error getting FCM token:', error);
+      return null;
+    }
   }
 }

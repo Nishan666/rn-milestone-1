@@ -42,8 +42,9 @@ const SignupScreen = () => {
         uid: user.uid,
         email: user.email!,
       }));
-
-      (navigation as any).navigate('Home');
+      const token = await firebaseService.requestFCMToken();
+      console.log('FCM Token:', token);
+      (navigation as any).navigate('HomeStack');
     } catch (error: any) {
       Alert.alert('Signup Error', error.message);
     } finally {
