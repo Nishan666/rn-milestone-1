@@ -28,7 +28,7 @@ import {
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import * as firebaseAuth from 'firebase/auth';       
+import * as firebaseAuth from 'firebase/auth';
 const reactNativePersistence = (firebaseAuth as any).getReactNativePersistence;
         
 
@@ -47,12 +47,12 @@ export class FirebaseService {
   constructor() {
     // Firebase configuration
     const firebaseConfig = {
-      apiKey: 'AIzaSyB2WjnyfE7PK8ZTM4_O5ukAeinCNVozFgE',
+      apiKey: 'AIzaSyBPBVAv7IUXF3SsCT45HFWpWke1DHGx6zE',
       authDomain: 'chat-app-a56fe.firebaseapp.com',
       projectId: 'chat-app-a56fe',
       storageBucket: 'chat-app-a56fe.firebasestorage.app',
       messagingSenderId: '110606577185',
-      appId: '1:110606577185:web:baddf6664e8f81a2d07d60',
+      appId: '1:110606577185:android:38b1ed15025c4b94d07d60',
     };
 
     // Initialize Firebase
@@ -64,8 +64,8 @@ export class FirebaseService {
 
     // Configure Google Sign-In
     GoogleSignin.configure({
-      // The client ID on your Google Developer Console
-      webClientId: '1021405126924-d6n3jjbnjm1uartl76mvqa23op4ufbei.apps.googleusercontent.com', // Replace with your actual Web Client ID
+      webClientId: "110606577185-erum5uskhbrf59ss72uh01tko2nliac1.apps.googleusercontent.com",
+      offlineAccess: true,
     });
   }
 
@@ -285,7 +285,7 @@ export class FirebaseService {
     return this.auth.currentUser;
   }
 
-    getAuthInstance(): Auth {
+  getAuthInstance(): Auth {
     return this.auth;
   }
 
