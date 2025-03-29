@@ -1,3 +1,6 @@
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ImageRequireSource } from "react-native";
+
 export interface ProfileData {
   nickname: string;
   email: string;
@@ -71,3 +74,21 @@ export interface ConfirmationModalProps {
   onCancel: () => void;
   destructive?: boolean;
 }
+
+
+export interface Slide {
+  title: string;
+  subtitle1: string;
+  subtitle2: string;
+  buttonText: string;
+  redirectTo: keyof RootStackParamList;
+}
+
+export type ImageSource = ImageRequireSource;
+
+export type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+};
+
+export type NavigationProps = StackNavigationProp<RootStackParamList>;

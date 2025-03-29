@@ -243,7 +243,7 @@ const AppNavigator = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const authUser = useSelector((state: RootState) => state.auth.user);
-  
+    
   useEffect(() => {
     const authService = FirebaseService.getInstance();
     const unsubscribe = authService.subscribeToAuthState(currentUser => {

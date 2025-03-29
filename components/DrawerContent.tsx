@@ -1,6 +1,6 @@
 // components/DrawerContent.js
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Text } from 'react-native';
 import { useDrawerContentViewModel } from '../viewModels/useDrawerContentViewModel';
@@ -8,7 +8,7 @@ import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const DrawerContent = (props: any) => {
   const { theme, t } = useSettingsViewModel();
-  const { icon, appName, environment } = useDrawerContentViewModel();
+  const { icon, appName, environment ,handleLogout } = useDrawerContentViewModel();
   
   const isDark = theme === 'dark';
 
@@ -25,6 +25,11 @@ const DrawerContent = (props: any) => {
         </View>
       </View>
       <DrawerItemList {...props} />
+      <View style={styles.logoutContainer}>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Text style={styles.logoutText}>{t('logout')}</Text>
+        </TouchableOpacity>
+      </View>
     </DrawerContentScrollView>
   );
 };
@@ -71,6 +76,21 @@ const styles = StyleSheet.create({
   envText: {
     fontFamily: 'Poppins-Medium',
     fontSize: 12,
+    color: '#fff',
+  },
+  logoutContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  logoutButton: {
+    backgroundColor: '#d32f2f',
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  logoutText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
     color: '#fff',
   },
 });
