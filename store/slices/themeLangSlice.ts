@@ -27,10 +27,16 @@ const themeLangSlice = createSlice({
       state.theme = action.payload.theme;
       state.language = action.payload.language;
     },
+    clearThemeLang: (state) => {
+      state.theme = 'light';
+      state.language = 'en';
+      AsyncStorage.removeItem('theme');
+      AsyncStorage.removeItem('language');
+    },
   },
 });
 
 export const selectTheme = (state: any) => state.themeLang.theme;
 export const selectLanguage = (state: any) => state.themeLang.language;
-export const { setTheme, setLanguage, loadThemeLang } = themeLangSlice.actions;
+export const { setTheme, setLanguage, loadThemeLang, clearThemeLang } = themeLangSlice.actions;
 export default themeLangSlice.reducer;

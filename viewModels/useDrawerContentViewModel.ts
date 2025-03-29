@@ -5,6 +5,7 @@ import { clearRoom } from '../store/slices/roomSlice';
 import { setUser } from '../store/slices/authSlice';
 import { clearNickname, clearProfile } from '../store/slices/profileSlice';
 import { FirebaseService } from '../services/FirebaseService';
+import { clearThemeLang } from '../store/slices/themeLangSlice';
 
 export const useDrawerContentViewModel = () => {
   const { appName, environment } = getEnvironment();
@@ -23,6 +24,7 @@ export const useDrawerContentViewModel = () => {
         email: '',
       }),
     );
+    dispatch(clearThemeLang())
     await firebaseService.signOut();
   };
 
