@@ -39,6 +39,25 @@
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="com.yourcompany.environmentpro.dev" />
       </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        
+        <!-- URL scheme for deep links -->
+        <data android:scheme="environmentpro" />
+      </intent-filter>
+      
+      <!-- App links / Universal links intent filter -->
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        
+        <data android:scheme="https" />
+        <data android:host="environmentpro.com" />
+        <data android:host="www.environmentpro.com" />
+      </intent-filter>
     </activity>
     <service
       android:name=".MyFirebaseMessagingService"

@@ -20,7 +20,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, themeStyles[theme as 'light' | 'dark']]}>
-      {profileData?.nickname === '' ? (
+      {profileData?.nickname === '' || profileData?.nickname === undefined ? (
       <NicknameForm />
       ) : roomData === null ? (
       <RoomForm />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './navigation/AppNavigator';

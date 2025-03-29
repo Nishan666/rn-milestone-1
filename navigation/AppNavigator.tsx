@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { Linking } from 'react-native';
 
 // Import your screens
 import HomeScreen from '../screens/HomeScreen';
@@ -130,7 +131,6 @@ const ImageUploadStack = () => {
   );
 };
 
-// Add this before the AppNavigator component
 // Update your theme definitions
 const lightTheme = {
   dark: false,
@@ -192,12 +192,58 @@ const darkTheme = {
   }
 };
 
+// Define linking configuration
+const linking = {
+  prefixes: [
+    'environmentpro://',            // Deep link URL scheme
+    'https://environmentpro.com',   // Web URL for universal links (iOS) or app links (Android)
+    'https://www.environmentpro.com'
+  ],
+  config: {
+    // Configuration for mapping paths to screens
+    screens: {
+      // Auth screens
+      GetStarted: 'getstarted',
+      Login: 'login',
+      Signup: 'signup',
+      
+      // Main app screens
+      HomeStack: {
+        screens: {
+          Home: 'home',
+        },
+      },
+      ProfileStack: {
+        screens: {
+          Profile: 'profile', 
+        },
+      },
+      SettingsStack: {
+        screens: {
+          Settings: 'settings',
+        },
+      },
+      AboutStack: {
+        screens: {
+          About: 'about',
+        },
+      },
+      ImageUploadStack: {
+        screens: {
+          'Image-Upload': 'upload',
+        },
+      },
+    },
+  },
+};
+
 const AppNavigator = () => {
   const { theme, t } = useSettingsViewModel();
   const isDark = theme === 'dark';
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const authUser = useSelector((state: RootState) => state.auth.user);
+  
   useEffect(() => {
     const authService = FirebaseService.getInstance();
     const unsubscribe = authService.subscribeToAuthState(currentUser => {
@@ -217,7 +263,26 @@ const AppNavigator = () => {
       }
       setLoading(false);
     });
-    return () => unsubscribe(); // Cleanup on unmount
+    
+    // Handle incoming links when app is already running
+    const handleIncomingLink = (event : any) => {
+      console.log('Incoming link:', event.url);
+    };
+    
+    // Listen for incoming links
+    const linkingSubscription = Linking.addEventListener('url', handleIncomingLink);
+    
+    // Check for initial link (if app was opened via deep link)
+    Linking.getInitialURL().then(url => {
+      if (url) {
+        console.log('App opened with URL:', url);
+      }
+    });
+    
+    return () => {
+      unsubscribe(); // Cleanup auth subscription
+      linkingSubscription.remove(); // Cleanup linking listener
+    };
   }, []);
 
   if (loading) {
@@ -229,7 +294,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <NavigationContainer theme={isDark ? darkTheme : lightTheme}>
+    <NavigationContainer theme={isDark ? darkTheme : lightTheme} linking={linking}>
       {!authUser ? (
         <Stack.Navigator
           initialRouteName="GetStarted"

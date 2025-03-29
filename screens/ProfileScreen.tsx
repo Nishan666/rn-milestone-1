@@ -15,7 +15,7 @@ const ProfileScreen = () => {
       <View style={styles.infoBox}>
         <Text style={styles.label}>{t('nickname')}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={styles.value}>{profile?.nickname}</Text>
+          <Text style={styles.value}>{profile?.nickname || '-'}</Text>
           <Pressable style={styles.button} onPress={handleEdit}>
             <Text>{profile?.nickname ? t('edit') : t('create')}</Text>
           </Pressable>
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   infoBox: { backgroundColor: '#f5f5f5', borderRadius: 10, padding: 20, width: '100%' },
   label: { fontSize: 14, color: '#666', marginTop: 10 },
   value: { fontSize: 16, color: '#333', marginVertical: 10 },
-  button: { backgroundColor: '#007bff', borderRadius: 5, paddingHorizontal: 15, paddingVertical: 5 },
+  button: { backgroundColor: '#007bff', borderRadius: 5, paddingHorizontal: 15, paddingTop:10 },
 });
 
 export default ProfileScreen;
