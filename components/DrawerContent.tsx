@@ -1,24 +1,31 @@
 // components/DrawerContent.js
 import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Button } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Text } from 'react-native';
 import { useDrawerContentViewModel } from '../viewModels/useDrawerContentViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import LottieView from 'lottie-react-native';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const DrawerContent = (props: any) => {
   const { theme, t } = useSettingsViewModel();
-  const { icon, appName, environment ,handleLogout } = useDrawerContentViewModel();
-  
+  const { icon, appName, environment, handleLogout } = useDrawerContentViewModel();
+
   const isDark = theme === 'dark';
 
   return (
-    <DrawerContentScrollView 
-      {...props} 
+    <DrawerContentScrollView
+      {...props}
       style={isDark ? styles.darkScrollView : styles.scrollView}
     >
       <View style={[styles.drawerHeader, isDark && styles.darkDrawerHeader]}>
-        <Image source={icon} style={styles.logo} resizeMode="contain" />
+        <LottieView
+          style={styles.logo}
+          source={require('../assets/lottie/logo.json')}
+          autoPlay
+          loop
+        />
         <Text style={[styles.appName, isDark && styles.darkText]}>{appName}</Text>
         <View style={styles.envBadge}>
           <Text style={styles.envText}>{t('environment')}: {environment}</Text>
@@ -30,6 +37,14 @@ const DrawerContent = (props: any) => {
           <Text style={styles.logoutText}>{t('logout')}</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity 
+            style={[styles.logoutButton, { marginTop: 10, backgroundColor: '#FF9800' }]} 
+            onPress={() => crashlytics().crash()}
+          >
+            <Text style={styles.logoutText}>
+              Test Crashlytics
+            </Text>
+          </TouchableOpacity>
     </DrawerContentScrollView>
   );
 };

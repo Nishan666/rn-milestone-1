@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadAssets, loadFonts } from '../utils/fontLoader';
-import { AppDispatch } from '../store';
+import { AppDispatch, store } from '../store';
 import { useDispatch } from 'react-redux';
 import { loadRoom } from '../store/slices/roomSlice';
 import { loadProfile } from '../store/slices/profileSlice';
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, BackHandler } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { loadThemeLang } from '../store/slices/themeLangSlice';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 export const useMainModel = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -103,6 +104,23 @@ export const useMainModel = () => {
   useEffect(() => {
     checkUserLoggedIn();
   }, []);
+
+
+  useEffect(() => {
+    // Enable crashlytics collection in production, disable in development if needed
+    crashlytics().setCrashlyticsCollectionEnabled(true);
+    
+    // Set user ID if authenticated
+    if (authenticated) {
+      crashlytics().setUserId(store.getState().auth.user?.uid || 'anonymous');
+    }
+    
+    // Log app start
+    crashlytics().log('App started');
+    console.log("crashlytics");
+    
+  }, [authenticated]);
+
 
   return {
     fontsLoaded,
