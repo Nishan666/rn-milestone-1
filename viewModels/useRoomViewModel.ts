@@ -64,6 +64,7 @@ export const useRoomViewModel = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
+    setLoading(true)
     
     let roomData: Room | undefined;
     
@@ -93,9 +94,10 @@ export const useRoomViewModel = () => {
     } catch (error) {
       console.error('Error handling room submission:', error);
       setErrors(prev => ({ ...prev, room: 'Failed to process room' }));
+    } finally{
+      setLoading(false)
     }
   };
-
   return {
     createNewRoom,
     setCreateNewRoom,

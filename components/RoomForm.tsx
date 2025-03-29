@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { useRoomViewModel } from '../viewModels/useRoomViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
@@ -30,6 +31,14 @@ const RoomForm: React.FC = () => {
   const { theme, t } = useSettingsViewModel();
   const isDarkMode = theme === 'dark';
 
+  if (loading) {
+    return (
+      <View style={styles.containerLoading}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -39,15 +48,15 @@ const RoomForm: React.FC = () => {
         <View style={styles.roomOptions}>
           <Pressable
             style={[
-              styles.option, 
+              styles.option,
               isDarkMode && styles.optionDark,
               createNewRoom ? (isDarkMode ? styles.selectedOptionDark : styles.selectedOption) : null
             ]}
             onPress={() => setCreateNewRoom(true)}>
-            <Text 
+            <Text
               style={
-                createNewRoom 
-                  ? styles.selectedOptionText 
+                createNewRoom
+                  ? styles.selectedOptionText
                   : [styles.optionText, isDarkMode && styles.optionTextDark]
               }>
               {t('createNewRoom')}
@@ -61,10 +70,10 @@ const RoomForm: React.FC = () => {
               !createNewRoom ? (isDarkMode ? styles.selectedOptionDark : styles.selectedOption) : null
             ]}
             onPress={() => setCreateNewRoom(false)}>
-            <Text 
+            <Text
               style={
-                !createNewRoom 
-                  ? styles.selectedOptionText 
+                !createNewRoom
+                  ? styles.selectedOptionText
                   : [styles.optionText, isDarkMode && styles.optionTextDark]
               }>
               {t('joinExistingRoom')}
@@ -77,8 +86,8 @@ const RoomForm: React.FC = () => {
             <Text style={[styles.label, isDarkMode && styles.labelDark]}>{t('roomName')}</Text>
             <TextInput
               style={[
-                styles.input, 
-                isDarkMode && styles.inputDark, 
+                styles.input,
+                isDarkMode && styles.inputDark,
                 errors.room ? styles.inputError : null
               ]}
               value={roomName}
@@ -106,8 +115,8 @@ const RoomForm: React.FC = () => {
                     style={[
                       styles.roomItem,
                       isDarkMode && styles.roomItemDark,
-                      selectedRoomId === room.id 
-                        ? (isDarkMode ? styles.selectedRoomItemDark : styles.selectedRoomItem) 
+                      selectedRoomId === room.id
+                        ? (isDarkMode ? styles.selectedRoomItemDark : styles.selectedRoomItem)
                         : null,
                     ]}
                     onPress={() => setSelectedRoomId(room.id)}>
@@ -301,6 +310,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  containerLoading: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
