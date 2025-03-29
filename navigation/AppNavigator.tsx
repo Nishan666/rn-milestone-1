@@ -16,7 +16,6 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { onAuthStateChanged } from '@react-native-firebase/auth';
 import { clearUser, setUser } from '../store/slices/authSlice';
 import { FirebaseService } from '../services/FirebaseService';
 import { ActivityIndicator, View } from 'react-native';
@@ -98,8 +97,8 @@ const AppNavigator = () => {
   const dispatch = useDispatch();
   const authUser = useSelector((state: RootState) => state.auth.user);
   useEffect(() => {
-    const auth = FirebaseService.getInstance().getAuthInstance();
-    const unsubscribe = onAuthStateChanged(auth, currentUser => {
+    const authService = FirebaseService.getInstance();
+    const unsubscribe = authService.subscribeToAuthState(currentUser => {
       setUser(currentUser);
       console.log('User:', currentUser);
       if (currentUser) {

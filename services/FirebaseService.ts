@@ -1,4 +1,5 @@
-import { initializeApp } from 'firebase/app';
+import 'react-native-get-random-values'; 
+import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import {
   getFirestore,
   collection,
@@ -18,7 +19,7 @@ import {
   updateDoc,
   getDoc,
 } from 'firebase/firestore';
-import { getMessaging, getToken } from '@react-native-firebase/messaging';
+import messaging from "@react-native-firebase/messaging";
 import { v4 as uuidv4 } from 'uuid';
 import {
   Auth,
@@ -33,8 +34,8 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as firebaseAuth from 'firebase/auth';
+import { Message } from '../models/types';
 const reactNativePersistence = (firebaseAuth as any).getReactNativePersistence;
-        
 
 export interface Room {
   id: string;
@@ -53,6 +54,7 @@ export interface RoomParticipant {
 
 export class FirebaseService {
   private static instance: FirebaseService;
+  private app: FirebaseApp;
   private db: Firestore;
   private auth: Auth;
   private messaging: any
@@ -69,18 +71,22 @@ export class FirebaseService {
     };
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    this.db = getFirestore(app);
-    this.messaging = getMessaging(app);
-    this.auth = initializeAuth(app, {
-      persistence: reactNativePersistence(AsyncStorage),
-    });
+    if (!getApps().length) {
+      this.app = initializeApp(firebaseConfig);
+      this.auth = initializeAuth(this.app, {
+        persistence: reactNativePersistence(AsyncStorage),
+      });
+      this.db = getFirestore(this.app);
 
-    // Configure Google Sign-In
-    GoogleSignin.configure({
-      webClientId: "110606577185-erum5uskhbrf59ss72uh01tko2nliac1.apps.googleusercontent.com",
-      offlineAccess: true,
-    });
+      GoogleSignin.configure({
+        webClientId: "110606577185-erum5uskhbrf59ss72uh01tko2nliac1.apps.googleusercontent.com",
+        offlineAccess: true,
+      });
+    } else {
+      this.app = getApps()[0];
+      this.auth = firebaseAuth.getAuth();
+      this.db = getFirestore();
+    }
   }
 
   // Singleton pattern to ensure only one instance of the service exists
@@ -316,6 +322,10 @@ export class FirebaseService {
     return this.db;
   }
 
+  subscribeToAuthState(callback: (user: any) => void) {
+    return firebaseAuth.onAuthStateChanged(this.auth, callback);
+  }
+
 
   //notifications
   async saveUserFCMTokenForRoom(roomId: string, userId: string, email: string, fcmToken: string): Promise<void> {
@@ -403,7 +413,9 @@ export class FirebaseService {
 
   async requestFCMToken(): Promise<string | null> {
     try {
-      const token = await getToken(this.messaging)
+      // const token = await getToken(this.messaging)
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await messaging().getToken();
       if (token) {
         await AsyncStorage.setItem('fcmToken', token);
       }
