@@ -13,6 +13,7 @@ import {
 import { useChatViewModel } from '../viewModels/useChatViewModel';
 import { Message } from '../models/types';
 import ConfirmationModal from './ConfirmationModal';
+import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -31,6 +32,9 @@ const ChatInterface: React.FC = () => {
     cancelExit,
   } = useChatViewModel();
 
+  const { theme, t } = useSettingsViewModel();
+  const isDarkMode = theme === 'dark';
+
   const renderMessage = ({ item }: { item: Message }) => {
     const isCurrentUser = item.userId === profileData?.email;
     const isSystemMessage = item.userId === 'system';
@@ -45,30 +49,34 @@ const ChatInterface: React.FC = () => {
               ? styles.rightMessage
               : styles.leftMessage,
         ]}>
-        {!isCurrentUser && !isSystemMessage && <Text style={styles.userName}>{item.userName}</Text>}
+        {!isCurrentUser && !isSystemMessage && (
+          <Text style={[styles.userName, isDarkMode && styles.userNameDark]}>
+            {item.userName}
+          </Text>
+        )}
         <View
           style={[
             styles.messageBubble,
             isSystemMessage
-              ? styles.systemBubble
+              ? isDarkMode ? styles.systemBubbleDark : styles.systemBubble
               : isCurrentUser
                 ? styles.rightBubble
-                : styles.leftBubble,
+                : isDarkMode ? styles.leftBubbleDark : styles.leftBubble,
           ]}>
           <Text
             style={[
               styles.messageText,
               isSystemMessage
-                ? styles.systemMessageText
+                ? isDarkMode ? styles.systemMessageTextDark : styles.systemMessageText
                 : isCurrentUser
                   ? styles.rightMessageText
-                  : styles.leftMessageText,
+                  : isDarkMode ? styles.leftMessageTextDark : styles.leftMessageText,
             ]}>
             {item.text}
           </Text>
         </View>
         {!isSystemMessage && (
-          <Text style={styles.timestamp}>
+          <Text style={[styles.timestamp, isDarkMode && styles.timestampDark]}>
             {item.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </Text>
         )}
@@ -77,22 +85,26 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{roomData?.roomName}</Text>
-        <Text style={styles.welcomeText}>Logged in as: {profileData?.nickname}</Text>
+        <Text style={styles.welcomeText}>
+          {t('loggedInAs')}: {profileData?.nickname}
+        </Text>
         <Pressable style={styles.logoutButton} onPress={handleExitPress}>
-          <Text style={styles.logoutText}>Exit Room</Text>
+          <Text style={styles.logoutText}>{t('exitRoom')}</Text>
         </Pressable>
       </View>
 
       <KeyboardAvoidingView
-        style={styles.container}
+        style={[styles.container, isDarkMode && styles.containerDark]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         {loading ? (
           <View style={styles.loadingContainer}>
-            <Text>Loading messages...</Text>
+            <Text style={isDarkMode ? styles.loadingTextDark : styles.loadingText}>
+              {t('loadingMessages')}...
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -106,12 +118,13 @@ const ChatInterface: React.FC = () => {
           />
         )}
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, isDarkMode && styles.inputContainerDark]}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, isDarkMode && styles.inputDark]}
             value={inputText}
             onChangeText={setInputText}
-            placeholder="Type a message..."
+            placeholder={t('typeMessage')}
+            placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
             multiline
           />
           <Pressable
@@ -121,15 +134,15 @@ const ChatInterface: React.FC = () => {
             ]}
             onPress={sendMessage}
             disabled={inputText.trim() === '' || sendLoading}>
-            <Text style={styles.sendButtonText}>Send</Text>
+            <Text style={styles.sendButtonText}>{t('send')}</Text>
           </Pressable>
         </View>
         <ConfirmationModal
           visible={isExitModalVisible}
-          title="Exit Room"
-          message="Are you sure you want to exit this room?"
-          confirmText="Exit"
-          cancelText="Cancel"
+          title={t('exitRoom')}
+          message={t('exitRoomConfirmation')}
+          confirmText={t('exit')}
+          cancelText={t('cancel')}
           confirmButtonColor="#dc3545"
           headerColor="#007bff"
           onConfirm={confirmExit}
@@ -145,6 +158,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  containerDark: {
+    backgroundColor: '#121212',
   },
   header: {
     padding: 16,
@@ -179,6 +195,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadingText: {
+    color: '#333',
+  },
+  loadingTextDark: {
+    color: '#ddd',
+  },
   messagesList: {
     flex: 1,
   },
@@ -205,6 +227,9 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     marginLeft: 10,
   },
+  userNameDark: {
+    color: '#aaa',
+  },
   messageBubble: {
     borderRadius: 20,
     padding: 10,
@@ -215,6 +240,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
+  leftBubbleDark: {
+    backgroundColor: '#2a2a2a',
+    borderWidth: 1,
+    borderColor: '#444',
+  },
   rightBubble: {
     backgroundColor: '#007bff',
   },
@@ -223,11 +253,19 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     borderWidth: 1,
   },
+  systemBubbleDark: {
+    backgroundColor: '#282828',
+    borderColor: '#444',
+    borderWidth: 1,
+  },
   messageText: {
     fontSize: 16,
   },
   leftMessageText: {
     color: '#000',
+  },
+  leftMessageTextDark: {
+    color: '#eee',
   },
   rightMessageText: {
     color: '#fff',
@@ -236,11 +274,18 @@ const styles = StyleSheet.create({
     color: '#666',
     fontStyle: 'italic',
   },
+  systemMessageTextDark: {
+    color: '#aaa',
+    fontStyle: 'italic',
+  },
   timestamp: {
     fontSize: 10,
     color: '#888',
     alignSelf: 'flex-end',
     marginRight: 10,
+  },
+  timestampDark: {
+    color: '#aaa',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -248,6 +293,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     backgroundColor: '#fff',
+  },
+  inputContainerDark: {
+    borderTopColor: '#444',
+    backgroundColor: '#1a1a1a',
   },
   input: {
     flex: 1,
@@ -257,6 +306,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     maxHeight: 100,
+    color: '#000',
+  },
+  inputDark: {
+    borderColor: '#444',
+    color: '#eee',
+    backgroundColor: '#2a2a2a',
   },
   sendButton: {
     justifyContent: 'center',
@@ -276,6 +331,5 @@ const styles = StyleSheet.create({
 });
 
 export default ChatInterface;
-
 // ADD INDEX
 // https://console.firebase.google.com/v1/r/project/chat-app-a56fe/firestore/indexes?create_composite=Ck9wcm9qZWN0cy9jaGF0LWFwcC1hNTZmZS9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvbWVzc2FnZXMvaW5kZXhlcy9fEAEaCgoGcm9vbUlkEAEaDQoJY3JlYXRlZEF0EAIaDAoIX19uYW1lX18QAg

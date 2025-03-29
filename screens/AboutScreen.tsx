@@ -1,35 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { useAboutViewModel } from '../viewModels/useAboutViewModel';
+import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const AboutScreen: React.FC = () => {
   const { appName, environment, icon } = useAboutViewModel();
 
+  const {theme , t} = useSettingsViewModel();
+
+  const isDark = theme === 'dark';
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView style={[styles.container, isDark && styles.darkContainer]}>
+      <View style={[styles.header, isDark && styles.darkHeader]}>
         <Image source={icon} style={styles.logo} resizeMode="contain" />
-        <Text style={styles.heading}>{appName}</Text>
-        <Text style={styles.version}>Version 1.0.0</Text>
-        <View
-          style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
+        <Text style={[styles.heading, isDark && styles.darkText]}>{appName}</Text>
+        <Text style={[styles.version, isDark && styles.darkText]}>Version 1.0.0</Text>
+        <View style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
           <Text style={styles.envText}>{environment.toUpperCase()}</Text>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About This App</Text>
-        <Text style={styles.paragraph}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy text ever since the 1500s, when an unknown printer took
-          a galley of type and scrambled it to make a type specimen book.
-        </Text>
+        <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('about_title')}</Text>
+        <Text style={[styles.paragraph, isDark && styles.darkText]}>{t('about_description')}</Text>
       </View>
     </ScrollView>
   );
 };
 
-// Styles with TypeScript
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -43,6 +42,9 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  darkHeader: {
+    backgroundColor: '#1e1e1e',
+  },
   logo: {
     width: 100,
     height: 100,
@@ -53,6 +55,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 5,
     color: '#000',
+  },
+  darkText: {
+    color: '#fff',
   },
   version: {
     fontFamily: 'Poppins-Regular',

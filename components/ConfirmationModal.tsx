@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
 import { ConfirmationModalProps } from '../models/types';
+import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   visible,
@@ -14,6 +15,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onCancel,
   destructive = false,
 }) => {
+  const { theme , t} = useSettingsViewModel()
   return (
     <Modal transparent={true} visible={visible} animationType="fade" onRequestClose={onCancel}>
       <View style={styles.modalBackground}>

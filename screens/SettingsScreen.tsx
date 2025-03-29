@@ -1,93 +1,49 @@
 import React from 'react';
-import { View, Text, StyleSheet, Switch, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const SettingsScreen: React.FC = () => {
-  const {
-    darkMode,
-    location,
-    notifications,
-    setDarkMode,
-    setLocation,
-    setNotifications,
-    biometrics,
-    toggleBiometrics,
-  } = useSettingsViewModel();
+  const { biometrics, toggleBiometrics, theme, language, toggleTheme, toggleLanguage, t } = useSettingsViewModel();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Settings</Text>
+    <View style={[styles.container, theme === 'dark' && styles.darkMode]}>
+      <Text style={[styles.heading, theme === 'dark' && styles.darkText]}>{t('settings')}</Text>
 
+      {/* Dark Mode Toggle */}
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
-          <Ionicons name="notifications-outline" size={24} color="#333" />
-          <Text style={styles.settingText}>Notifications</Text>
+          <Ionicons name="moon-outline" size={24} color={theme === 'dark' ? "#FFF" : "#333"} />
+          <Text style={[styles.settingText, theme === 'dark' && styles.darkText]}>{t('darkMode')}</Text>
         </View>
-        <Switch
-          value={notifications}
-          onValueChange={setNotifications}
-          trackColor={{ false: '#ccc', true: '#81b0ff' }}
-          thumbColor={notifications ? '#4CAF50' : '#f4f3f4'}
-        />
+        <Switch value={theme === 'dark'} onValueChange={toggleTheme} />
       </View>
 
+      {/* Language Toggle */}
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
-          <Ionicons name="moon-outline" size={24} color="#333" />
-          <Text style={styles.settingText}>Dark Mode</Text>
+          <Ionicons name="language-outline" size={24} color={theme === 'dark' ? "#FFF" : "#333"} />
+          <Text style={[styles.settingText, theme === 'dark' && styles.darkText]}>{t('language')}</Text>
         </View>
-        <Switch
-          value={darkMode}
-          onValueChange={setDarkMode}
-          trackColor={{ false: '#ccc', true: '#81b0ff' }}
-          thumbColor={darkMode ? '#4CAF50' : '#f4f3f4'}
-        />
+        <Switch value={language === 'fr'} onValueChange={toggleLanguage} />
       </View>
 
+      {/* Biometrics Toggle */}
       <View style={styles.settingItem}>
         <View style={styles.settingInfo}>
-          <Ionicons name="location-outline" size={24} color="#333" />
-          <Text style={styles.settingText}>Location Services</Text>
+          <Ionicons name="finger-print-outline" size={24} color={theme === 'dark' ? "#FFF" : "#333"} />
+          <Text style={[styles.settingText, theme === 'dark' && styles.darkText]}>{t('biometric')}</Text>
         </View>
-        <Switch
-          value={location}
-          onValueChange={setLocation}
-          trackColor={{ false: '#ccc', true: '#81b0ff' }}
-          thumbColor={location ? '#4CAF50' : '#f4f3f4'}
-        />
+        <Switch value={biometrics} onValueChange={toggleBiometrics} />
       </View>
-
-      <View style={styles.settingItem}>
-        <View style={styles.settingInfo}>
-          <Ionicons name="notifications-outline" size={24} color="#333" />
-          <Text style={styles.settingText}>Biometrics</Text>
-        </View>
-        <Switch
-          value={biometrics}
-          onValueChange={toggleBiometrics}
-          trackColor={{ false: '#ccc', true: '#81b0ff' }}
-          thumbColor={notifications ? '#4CAF50' : '#f4f3f4'}
-        />
-      </View>
-
-      <Pressable style={styles.button}>
-        <Text style={styles.buttonText}>Reset Settings</Text>
-      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  heading: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#FFF' },
+  darkMode: { backgroundColor: '#333' },
+  heading: { fontSize: 24, marginBottom: 20, textAlign: 'center', color: '#333' },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -96,27 +52,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  settingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  settingText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  button: {
-    backgroundColor: '#f44336',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  buttonText: {
-    fontFamily: 'Poppins-Medium',
-    color: '#fff',
-    fontSize: 16,
-  },
+  settingInfo: { flexDirection: 'row', alignItems: 'center' },
+  settingText: { fontSize: 16, marginLeft: 10, color: '#333' },
+  darkText: { color: '#FFF' },
 });
 
 export default SettingsScreen;

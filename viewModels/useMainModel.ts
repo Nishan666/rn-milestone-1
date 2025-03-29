@@ -7,6 +7,7 @@ import { loadProfile } from '../store/slices/profileSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, BackHandler } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
+import { loadThemeLang } from '../store/slices/themeLangSlice';
 
 export const useMainModel = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -32,13 +33,23 @@ export const useMainModel = () => {
     loadResources();
   }, []);
 
+  const loadSettings = async () => {
+    const storedTheme = (await AsyncStorage.getItem('theme')) || 'light';
+    const storedLanguage = (await AsyncStorage.getItem('language')) || 'en';
+
+    dispatch(loadThemeLang({ theme: storedTheme as 'light' | 'dark', language: storedLanguage as 'en' | 'fr' }));
+  };
+
   useEffect(() => {
     dispatch(loadProfile());
     dispatch(loadRoom());
+    loadSettings();
   }, [dispatch]);
 
   const checkUserLoggedIn = async () => {
     const biometricEnabled = await AsyncStorage.getItem('biometrics');
+    const language = await AsyncStorage.getItem('language');
+    const theme = await AsyncStorage.getItem('theme');
 
     if (biometricEnabled === 'true') {
       const hasHardware = await LocalAuthentication.hasHardwareAsync();

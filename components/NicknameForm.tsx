@@ -10,43 +10,85 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNicknameViewModel } from '../viewModels/useNicknameViewModel';
+import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
 const NicknameForm: React.FC = () => {
   const { handleSubmit, errors, nickname, setNickname, setErrors } = useNicknameViewModel();
+  const { theme, t } = useSettingsViewModel();
+  
+  // Get theme colors based on the current theme
+  const themeColors = theme === 'dark' ? darkTheme : lightTheme;
+  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
+      style={[styles.container, { backgroundColor: themeColors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Welcome!</Text>
-        <Text style={styles.subtitle}>Please create your profile to continue</Text>
-
+        <Text style={[styles.title, { color: themeColors.text }]}>{t('welcome')}</Text>
+        <Text style={[styles.subtitle, { color: themeColors.secondaryText }]}>
+          {t('createProfile')}
+        </Text>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Nickname</Text>
+          <Text style={[styles.label, { color: themeColors.text }]}>{t('nickname')}</Text>
           <TextInput
-            style={[styles.input, errors.nickname ? styles.inputError : null]}
+            style={[
+              styles.input, 
+              { 
+                borderColor: themeColors.border,
+                color: themeColors.text,
+                backgroundColor: themeColors.inputBackground
+              },
+              errors.nickname ? [styles.inputError, { borderColor: themeColors.error }] : null
+            ]}
             value={nickname}
             onChangeText={text => {
               setNickname(text);
               if (errors.nickname) setErrors(prev => ({ ...prev, nickname: undefined }));
             }}
-            placeholder="Enter your nickname"
+            placeholder={t('enterNickname')}
+            placeholderTextColor={themeColors.placeholder}
           />
-          {errors.nickname && <Text style={styles.error}>{errors.nickname}</Text>}
+          {errors.nickname && <Text style={[styles.error, { color: themeColors.error }]}>{t(errors.nickname)}</Text>}
         </View>
-
-        <Pressable style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Save</Text>
+        <Pressable 
+          style={[styles.button, { backgroundColor: themeColors.primary }]} 
+          onPress={handleSubmit}
+        >
+          <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('save')}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
+// Theme definitions
+const lightTheme = {
+  background: '#ffffff',
+  text: '#000000',
+  secondaryText: '#666666',
+  border: '#dddddd',
+  inputBackground: '#ffffff',
+  primary: '#007bff',
+  buttonText: '#ffffff',
+  error: '#ff0000',
+  placeholder: '#999999',
+};
+
+const darkTheme = {
+  background: '#121212',
+  text: '#ffffff',
+  secondaryText: '#aaaaaa',
+  border: '#444444',
+  inputBackground: '#222222',
+  primary: '#0a84ff',
+  buttonText: '#ffffff',
+  error: '#ff6b6b',
+  placeholder: '#777777',
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -62,7 +104,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -79,78 +120,17 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 12,
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     fontSize: 16,
   },
   inputError: {
-    borderColor: 'red',
+    borderWidth: 2,
   },
   error: {
-    color: 'red',
     fontSize: 12,
     marginTop: 4,
   },
-  roomOptions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 16,
-  },
-  option: {
-    flex: 1,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    marginHorizontal: 4,
-    borderRadius: 8,
-  },
-  selectedOption: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
-  },
-  optionText: {
-    color: '#333',
-  },
-  selectedOptionText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  roomList: {
-    maxHeight: 150,
-    width: '100%',
-  },
-  roomItem: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  selectedRoomItem: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
-  },
-  roomItemText: {
-    color: '#333',
-  },
-  selectedRoomItemText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  loadingText: {
-    color: '#666',
-    textAlign: 'center',
-    padding: 12,
-  },
-  noRoomsText: {
-    color: '#666',
-    textAlign: 'center',
-    padding: 12,
-  },
   button: {
-    backgroundColor: '#007bff',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -158,7 +138,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonText: {
-    color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },

@@ -18,8 +18,6 @@ export const getEnvironment = (): EnvironmentConfig => {
   };
 };
 
-
-
 export const getEnvironmentAssets = (): EnvironmentAssets => {
   const { environment } = getEnvironment();
 
