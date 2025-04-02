@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { useMainModel } from './viewModels/useMainModel';
+import { useSettingsViewModel } from './viewModels/useSettingsViewModel';
 
 // Separate component that can use Redux
 function AppContent() {
@@ -17,10 +18,12 @@ function AppContent() {
     authenticated,
   } = useMainModel();
 
+    const { theme } = useSettingsViewModel();
+
   if (!fontsLoaded || !assetsLoaded) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={[styles.loadingContainer, themeStyles[theme]]}>
+        <ActivityIndicator size="large" color={theme === 'dark' ? '#fff' : '#007bff'} />
       </View>
     );
   }
@@ -48,8 +51,25 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },  
+  container: {
+    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+});
+
+const themeStyles = StyleSheet.create({
+  light: {
+    backgroundColor: '#fff',
+  },
+  dark: {
+    backgroundColor: '#121212', // Dark theme background
   },
 });

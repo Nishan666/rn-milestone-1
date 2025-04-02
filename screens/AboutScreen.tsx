@@ -6,7 +6,7 @@ import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 const AboutScreen: React.FC = () => {
   const { appName, environment, icon } = useAboutViewModel();
 
-  const {theme , t} = useSettingsViewModel();
+  const { theme, t } = useSettingsViewModel();
 
   const isDark = theme === 'dark';
 
@@ -16,7 +16,8 @@ const AboutScreen: React.FC = () => {
         <Image source={icon} style={styles.logo} resizeMode="contain" />
         <Text style={[styles.heading, isDark && styles.darkText]}>{appName}</Text>
         <Text style={[styles.version, isDark && styles.darkText]}>Version 1.0.0</Text>
-        <View style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
+        <View
+          style={[styles.envBadge, environment === 'production' ? styles.envProd : styles.envDev]}>
           <Text style={styles.envText}>{environment.toUpperCase()}</Text>
         </View>
       </View>

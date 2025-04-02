@@ -110,6 +110,7 @@ export const useRoomViewModel = () => {
     errors,
     handleSubmit,
     setErrors,
-    refreshRooms: fetchRooms
+    refreshRooms: fetchRooms,
+    fetchRooms,
   };
 };
