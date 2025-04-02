@@ -13,6 +13,7 @@ export const useSettingsViewModel = () => {
   const [locationPermission, setLocationPermission] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const dispatch = useDispatch();
   const theme = useSelector(selectTheme);
   const language = useSelector(selectLanguage);
@@ -50,6 +51,7 @@ export const useSettingsViewModel = () => {
 
   const fetchLocation = async () => {
     try {
+      setIsLoadingLocation(true);
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status === 'granted') {
         const location = await Location.getCurrentPositionAsync({});
@@ -57,21 +59,27 @@ export const useSettingsViewModel = () => {
       }
     } catch (error) {
       console.error('Error fetching location:', error);
+    } finally {
+      setIsLoadingLocation(false);
     }
   };
 
   const requestLocationPermission = async () => {
     try {
+      setIsLoadingLocation(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
       const isGranted = status === 'granted';
       setLocationPermission(isGranted);
       await AsyncStorage.setItem('locationPermission', JSON.stringify(isGranted));
       
       if (isGranted) {
-        fetchLocation();
+        await fetchLocation();
+      } else {
+        setIsLoadingLocation(false);
       }
     } catch (error) {
       console.error('Error requesting location permission:', error);
+      setIsLoadingLocation(false);
     }
   };
 
@@ -145,6 +153,7 @@ export const useSettingsViewModel = () => {
     toggleLocationPermission,
     toggleNotificationPermission,
     currentLocation,
+    isLoadingLocation,
     t,
   };
 };

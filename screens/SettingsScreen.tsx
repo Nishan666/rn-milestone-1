@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Switch, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Switch, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 
@@ -16,6 +16,7 @@ const SettingsScreen = () => {
     toggleLocationPermission,
     toggleNotificationPermission,
     currentLocation,
+    isLoadingLocation,
     t 
   } = useSettingsViewModel();
 
@@ -97,20 +98,34 @@ const SettingsScreen = () => {
         />
       </View>
       
-      {/* Current Location Display */}
-      {locationPermission && currentLocation && (
+      {/* Location Information Section */}
+      {locationPermission && (
         <View style={[styles.locationContainer, theme === 'dark' && styles.darkLocationContainer]}>
           <Text style={[styles.locationTitle, theme === 'dark' && styles.darkText]}>
             {t('currentLocation')}
           </Text>
-          <View style={styles.locationCoords}>
+          
+          {isLoadingLocation ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme === 'dark' ? "#81b0ff" : "#0066cc"} />
+              <Text style={[styles.loadingText, theme === 'dark' && styles.darkText]}>
+                {t('fetchingLocation')}
+              </Text>
+            </View>
+          ) : currentLocation ? (
+            <View style={styles.locationCoords}>
+              <Text style={[styles.locationText, theme === 'dark' && styles.darkText]}>
+                {t('latitude')}: {currentLocation.latitude.toFixed(6)}
+              </Text>
+              <Text style={[styles.locationText, theme === 'dark' && styles.darkText]}>
+                {t('longitude')}: {currentLocation.longitude.toFixed(6)}
+              </Text>
+            </View>
+          ) : (
             <Text style={[styles.locationText, theme === 'dark' && styles.darkText]}>
-              {t('latitude')}: {currentLocation.latitude.toFixed(6)}
+              {t('locationUnavailable')}
             </Text>
-            <Text style={[styles.locationText, theme === 'dark' && styles.darkText]}>
-              {t('longitude')}: {currentLocation.longitude.toFixed(6)}
-            </Text>
-          </View>
+          )}
         </View>
       )}
     </ScrollView>
@@ -179,6 +194,17 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 14,
     marginBottom: 5,
+    color: '#666',
+    fontFamily: 'Poppins-Regular'
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
     color: '#666',
     fontFamily: 'Poppins-Regular'
   }
