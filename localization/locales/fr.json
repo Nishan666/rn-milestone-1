@@ -1,7 +1,6 @@
 {
     "settings": "Paramètres",
     "dark_mode": "Mode Sombre",
-    "language": "Langue FR/EN",
     "profile": "Profil",
     "profile_description": "Gérez les détails de votre profil ci-dessous.",
     "nickname": "Surnom",
@@ -82,5 +81,13 @@
     "developed_by": "Développé par",
     "contact_us": "Contactez-nous",
     "privacy_policy": "Politique de confidentialité",
-    "terms_of_service": "Conditions d'utilisation"
+    "terms_of_service": "Conditions d'utilisation",
+    "darkMode": "Mode Sombre",
+    "language": "Langue: Anglais/Français",
+    "biometric": "Authentification Biométrique",
+    "notifications": "Activer les Notifications",
+    "location": "Activer les Services de Localisation",
+    "currentLocation": "Position Actuelle",
+    "latitude": "Latitude",
+    "longitude": "Longitude"
 }

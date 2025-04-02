@@ -1,7 +1,6 @@
 {
     "settings": "Settings",
     "dark_mode": "Dark Mode",
-    "language": "Language FR/EN",
     "profile": "Profile",
     "profile_description": "Manage your profile details below.",
     "nickname": "Nickname",
@@ -82,5 +81,13 @@
     "developed_by": "Developed by",
     "contact_us": "Contact Us",
     "privacy_policy": "Privacy Policy",
-    "terms_of_service": "Terms of Service"
+    "terms_of_service": "Terms of Service",
+    "darkMode": "Dark Mode",
+    "language": "Language: English/French",
+    "biometric": "Biometric Authentication",
+    "notifications": "Enable Notifications",
+    "location": "Enable Location Services",
+    "currentLocation": "Current Location",
+    "latitude": "Latitude",
+    "longitude": "Longitude"
 }
