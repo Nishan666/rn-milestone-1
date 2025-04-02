@@ -6,14 +6,13 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../localization/i18n';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
 
 export const useSettingsViewModel = () => {
   const { t } = useTranslation();
   const [biometrics, setBiometrics] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
   const dispatch = useDispatch();
   const theme = useSelector(selectTheme);
   const language = useSelector(selectLanguage);
