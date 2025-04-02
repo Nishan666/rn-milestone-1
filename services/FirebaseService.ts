@@ -1,4 +1,4 @@
-import 'react-native-get-random-values'; 
+import 'react-native-get-random-values';
 import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import {
   getFirestore,
@@ -19,7 +19,7 @@ import {
   updateDoc,
   getDoc,
 } from 'firebase/firestore';
-import messaging from "@react-native-firebase/messaging";
+import messaging from '@react-native-firebase/messaging';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Auth,
@@ -42,7 +42,7 @@ export interface Room {
   name: string;
   createdAt?: string;
   createdBy?: string;
-  participants?: string[]
+  participants?: string[];
 }
 
 export interface RoomParticipant {
@@ -57,7 +57,7 @@ export class FirebaseService {
   private app: FirebaseApp;
   private db: Firestore;
   private auth: Auth;
-  private messaging: any
+  private messagingInstance: any;
 
   constructor() {
     // Firebase configuration
@@ -77,16 +77,37 @@ export class FirebaseService {
         persistence: reactNativePersistence(AsyncStorage),
       });
       this.db = getFirestore(this.app);
+      this.messagingInstance = messaging(); // Initialize messaging
 
       GoogleSignin.configure({
-        webClientId: "110606577185-erum5uskhbrf59ss72uh01tko2nliac1.apps.googleusercontent.com",
+        webClientId: '110606577185-erum5uskhbrf59ss72uh01tko2nliac1.apps.googleusercontent.com',
         offlineAccess: true,
       });
     } else {
       this.app = getApps()[0];
       this.auth = firebaseAuth.getAuth();
       this.db = getFirestore();
+      this.messagingInstance = messaging();
     }
+
+    // Set up notification handlers
+    this.setupNotificationHandlers();
+  }
+
+  // Set up notification handlers
+  private setupNotificationHandlers() {
+    // Handler for foreground messages
+    this.messagingInstance.onMessage(async (remoteMessage: any) => {
+      console.log('Foreground notification received:', remoteMessage);
+      // Handle the notification according to your app's UI needs
+      // You may want to display a custom notification UI here
+    });
+
+    // Set background message handler (must be done outside of any component)
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Background notification received:', remoteMessage);
+      return Promise.resolve();
+    });
   }
 
   // Singleton pattern to ensure only one instance of the service exists
@@ -109,6 +130,7 @@ export class FirebaseService {
         name: doc.data().name || 'Unnamed Room',
         createdAt: doc.data().createdAt,
         createdBy: doc.data().createdBy,
+        participants: doc.data().participants || [],
       }));
     } catch (error) {
       console.error('Error fetching rooms:', error);
@@ -122,6 +144,7 @@ export class FirebaseService {
         name: roomName,
         createdAt: new Date().toISOString(),
         createdBy: nickname,
+        participants: [], // Initialize empty participants array
       });
 
       return {
@@ -129,6 +152,7 @@ export class FirebaseService {
         name: roomName,
         createdAt: new Date().toISOString(),
         createdBy: nickname,
+        participants: [],
       };
     } catch (error) {
       console.error('Error creating room:', error);
@@ -332,9 +356,9 @@ export class FirebaseService {
     try {
       const participantRef = doc(this.db, 'rooms', roomId, 'participants', userId);
       await setDoc(participantRef, {
-        userId,
-        email,
-        fcmToken,
+          userId,
+          email,
+          fcmToken,
         lastEnteredAt: new Date().toISOString()
       }, { merge: true });
 
@@ -395,13 +419,13 @@ export class FirebaseService {
           // to send FCM tokens. This is a simplified client-side approach.
           if (participantData.fcmToken) {
             try {
-                await this.messaging().sendMessage({
+                await this.messagingInstance().sendMessage({
                 ...notificationPayload,
                 token: participantData.fcmToken
                 } as any);
             } catch (error) {
               console.error('Error sending notification to participant:', error);
-            }
+      }
           }
         });
 
