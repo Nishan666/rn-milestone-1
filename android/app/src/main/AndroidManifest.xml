@@ -43,31 +43,25 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        
+
         <!-- URL scheme for deep links -->
         <data android:scheme="environmentpro" />
       </intent-filter>
-      
+
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+
       <!-- App links / Universal links intent filter -->
       <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        
+
         <data android:scheme="https" />
         <data android:host="environmentpro.com" />
         <data android:host="www.environmentpro.com" />
       </intent-filter>
     </activity>
-    <service
-      android:name=".MyFirebaseMessagingService"
-      android:exported="false">
-      <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT" />
-      </intent-filter>
-    </service>
-    <meta-data
-    android:name="com.google.firebase.messaging.default_notification_channel_id"
-    android:value="chat_messages" />
   </application>
 </manifest>
