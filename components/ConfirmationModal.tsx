@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
 import { ConfirmationModalProps } from '../models/types';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   visible,
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   confirmButton: {
     borderLeftWidth: 0.5,
     borderLeftColor: '#e0e0e0',
-    backgroundColor: '#f5f5f5',
+    backgroundColor:  baseColors.grey100,
   },
   cancelButtonText: {
     color: '#333',

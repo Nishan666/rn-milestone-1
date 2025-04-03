@@ -23,12 +23,13 @@ import { ActivityIndicator, View } from 'react-native';
 import { saveProfile } from '../store/slices/profileSlice';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 import { StyleSheet } from 'react-native';
+import baseColors from '../utils/colorSchema';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const screenOptions = {
-  headerStyle: { backgroundColor: '#4CAF50' },
+  headerStyle: { backgroundColor:  baseColors.success },
   headerTintColor: '#fff',
   headerTitleStyle: { fontFamily: 'Poppins-Medium' },
 };
@@ -156,9 +157,9 @@ const ImageUploadStack = () => {
 const lightTheme = {
   dark: false,
   colors: {
-    primary: '#4CAF50',
-    background: '#FFFFFF',
-    card: '#FFFFFF',
+    primary:  baseColors.success,
+    background:  baseColors.white,
+    card:  baseColors.white,
     text: '#333333',
     border: '#E0E0E0',
     notification: '#FF9800',
@@ -189,7 +190,7 @@ const darkTheme = {
     primary: '#6FCF76',
     background: '#121212',
     card: '#1E1E1E',
-    text: '#FFFFFF',
+    text:  baseColors.white,
     border: '#333333',
     notification: '#FF9800',
   },
@@ -271,7 +272,7 @@ const AppNavigator = () => {
     
     // For Android to handle background color
     if (Platform.OS === 'android') {
-      StatusBar.setBackgroundColor(isDark ? '#121212' : '#FFFFFF');
+      StatusBar.setBackgroundColor(isDark ? '#121212' :  baseColors.white);
     }
   }, [isDark]);
 
@@ -321,7 +322,7 @@ const AppNavigator = () => {
       <View style={[styles.loadingContainer, themeStyles[theme as 'light' | 'dark']]}>
         <StatusBar 
           barStyle={isDark ? 'light-content' : 'dark-content'} 
-          backgroundColor={isDark ? '#121212' : '#FFFFFF'}
+          backgroundColor={isDark ? '#121212' :  baseColors.white}
         />
         <ActivityIndicator size="large" color={theme === 'dark' ? '#fff' : '#007bff'} />
       </View>
@@ -332,7 +333,7 @@ const AppNavigator = () => {
     <>
       <StatusBar 
         barStyle={isDark ? 'light-content' : 'dark-content'} 
-        backgroundColor={isDark ? '#121212' : '#FFFFFF'} 
+        backgroundColor={isDark ? '#121212' :  baseColors.white} 
       />
       <NavigationContainer theme={isDark ? darkTheme : lightTheme} linking={linking}>
         {!authUser ? (
@@ -351,7 +352,7 @@ const AppNavigator = () => {
             drawerContent={props => <DrawerContent {...props} />}
             screenOptions={{
               headerShown: false,
-              drawerActiveTintColor: isDark ? '#6FCF76' : '#4CAF50',
+              drawerActiveTintColor: isDark ? '#6FCF76' :  baseColors.success,
               drawerInactiveTintColor: isDark ? '#e0e0e0' : '#333',
               drawerStyle: {
                 backgroundColor: isDark ? '#121212' : '#fff',

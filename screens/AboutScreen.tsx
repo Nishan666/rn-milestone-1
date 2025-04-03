@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import { useAboutViewModel } from '../viewModels/useAboutViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const AboutScreen: React.FC = () => {
   const { appName, environment, icon } = useAboutViewModel();
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor:  baseColors.grey100,
   },
   darkHeader: {
     backgroundColor: '#1e1e1e',
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   envProd: {
-    backgroundColor: '#4CAF50', // Green for production
+    backgroundColor:  baseColors.success, // Green for production
   },
   envDev: {
     backgroundColor: '#FF9800', // Orange for development

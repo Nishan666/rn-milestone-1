@@ -6,6 +6,7 @@ import { useDrawerContentViewModel } from '../viewModels/useDrawerContentViewMod
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
 import LottieView from 'lottie-react-native';
 import crashlytics from '@react-native-firebase/crashlytics';
+import baseColors from '../utils/colorSchema';
 
 const DrawerContent = (props : any) => {
   const { theme, t } = useSettingsViewModel();
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   },
   drawerHeader: {
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor:  baseColors.grey100,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     marginBottom: 10,
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   envBadge: {
-    backgroundColor: '#4CAF50',
+    backgroundColor:  baseColors.success,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,

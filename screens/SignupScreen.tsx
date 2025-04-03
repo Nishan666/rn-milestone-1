@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Pressable } from 'react-native-gesture-handler';
 import { useSignupScreenViewModel } from '../viewModels/useSignupScreenViewModel';
+import baseColors from '../utils/colorSchema';
 
 const SignupScreen = () => {
   const { name , setEmail , setName , setPassword , confirmPassword , setConfirmPassword ,handleSignup , password, email, loading ,navigation} = useSignupScreenViewModel()
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor:  baseColors.success,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
   },
   switchContainer: { marginTop: 20, alignItems: 'center' },
   switchText: { color: '#666' },
-  switchLink: { color: '#4CAF50', fontWeight: '600' },
+  switchLink: { color:  baseColors.success, fontWeight: '600' },
 });
 
 export default SignupScreen;

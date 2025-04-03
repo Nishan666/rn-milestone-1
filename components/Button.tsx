@@ -8,6 +8,7 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
+import baseColors from "../utils/colorSchema";
 
 interface ButtonProps extends PressableProps {
   variant?: "primary" | "secondary" | "outline";
@@ -44,7 +45,7 @@ export const Button = ({
     >
       {loading && (
         <ActivityIndicator
-          color={variant === "outline" ? '#FF6F00' : "#fff"}
+          color={variant === "outline" ? baseColors.primary : "#fff"}
           style={styles.spinner}
         />
       )}
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
   },
   // Variants
   primary: {
-    backgroundColor: '#FF6F00',
+    backgroundColor: baseColors.primary,
   },
   secondary: {
     backgroundColor: '#E2E8F0',
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   outline: {
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: '#FF6F00',
+    borderColor: baseColors.primary,
   },
   // Sizes
   sm: {
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     color: "#1F2937",
   },
   outlineText: {
-    color: '#FF6F00',
+    color: baseColors.primary,
   },
   // Disabled state
   disabled: {

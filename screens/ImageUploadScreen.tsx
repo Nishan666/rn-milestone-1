@@ -11,6 +11,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useImageUploadScreenViewModel } from '../viewModels/useImageUploadScreenViewModel';
+import baseColors from '../utils/colorSchema';
 
 export default function ImageUploadScreen() {
   const { isAuthenticated, token, setToken, handleLogin, isLoading, image, pickImage, uploadImage, uploadStatus, t, theme } = useImageUploadScreenViewModel()
@@ -85,31 +86,31 @@ export default function ImageUploadScreen() {
 
 // Theme definitions
 const lightTheme = {
-  background: '#f5f5f5',
-  cardBackground: '#ffffff',
-  text: '#000000',
+  background:  baseColors.grey100,
+  cardBackground:  baseColors.white,
+  text:  baseColors.black,
   secondaryText: '#555555',
   border: '#dddddd',
-  shadow: '#000000',
-  inputBackground: '#ffffff',
+  shadow:  baseColors.black,
+  inputBackground:  baseColors.white,
   placeholder: '#999999',
   primary: '#007bff',
   disabledButton: '#cccccc',
-  buttonText: '#ffffff',
+  buttonText:  baseColors.white,
 };
 
 const darkTheme = {
   background: '#121212',
   cardBackground: '#1e1e1e',
-  text: '#ffffff',
+  text:  baseColors.white,
   secondaryText: '#aaaaaa',
   border: '#444444',
-  shadow: '#000000',
+  shadow:  baseColors.black,
   inputBackground: '#2c2c2c',
   placeholder: '#777777',
   primary: '#0a84ff',
   disabledButton: '#555555',
-  buttonText: '#ffffff',
+  buttonText:  baseColors.white,
 };
 
 const styles = StyleSheet.create({

@@ -14,6 +14,7 @@ import { useChatViewModel } from '../viewModels/useChatViewModel';
 import { Message } from '../models/types';
 import ConfirmationModal from './ConfirmationModal';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -157,7 +158,7 @@ const ChatInterface: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor:  baseColors.grey100,
   },
   containerDark: {
     backgroundColor: '#121212',

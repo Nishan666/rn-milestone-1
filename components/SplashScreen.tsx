@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { useSplashViewModel } from '../viewModels/useSplashViewModel';
 import { SplashScreenProps } from '../models/types';
+import baseColors from '../utils/colorSchema';
 
 const SplashScreen: React.FC<SplashScreenProps> = ({
   setSplashFinished,
@@ -23,7 +24,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor:  baseColors.white,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#4CAF50',
+    backgroundColor:  baseColors.success,
   },
   loadingText: {
     fontFamily: 'Poppins-Medium',
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   authfailedText: {
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
-    color: '#f44336',
+    color:  baseColors.error,
     marginTop: 10,
   },
 });

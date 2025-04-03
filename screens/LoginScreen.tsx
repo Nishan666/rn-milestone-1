@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { TextInput, Pressable } from 'react-native-gesture-handler';
 import { useLoginScreenViewModel } from '../viewModels/useLoginScreenViewModel';
+import baseColors from '../utils/colorSchema';
 
 const LoginScreen = () => {
   const {email , setEmail , setPassword , password , handleGoogleSignIn, loading , handleLogin, navigation} = useLoginScreenViewModel()
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor:  baseColors.success,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   switchContainer: { marginTop: 20, alignItems: 'center' },
   switchText: { color: '#666' },
-  switchLink: { color: '#4CAF50', fontWeight: '600' },
+  switchLink: { color:  baseColors.success, fontWeight: '600' },
 });
 
 export default LoginScreen;

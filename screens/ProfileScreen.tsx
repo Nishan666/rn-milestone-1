@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useProfileViewModel } from '../viewModels/useProfileViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const ProfileScreen = () => {
   const { handleEdit, profile } = useProfileViewModel();
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   heading: { fontSize: 24, marginBottom: 20, color: '#333' },
   darkText: { color: '#FFF' },
   text: { fontSize: 16, marginBottom: 20, textAlign: 'center' },
-  infoBox: { backgroundColor: '#f5f5f5', borderRadius: 10, padding: 20, width: '100%' },
+  infoBox: { backgroundColor:  baseColors.grey100, borderRadius: 10, padding: 20, width: '100%' },
   label: { fontSize: 14, color: '#666', marginTop: 10 },
   value: { fontSize: 16, color: '#333', marginVertical: 10 },
   button: { backgroundColor: '#007bff', borderRadius: 5, paddingHorizontal: 15, paddingTop:10 },

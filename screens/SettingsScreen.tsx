@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Switch, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const SettingsScreen = () => {
   const { 
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     padding: 15,
     borderRadius: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor:  baseColors.grey100,
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },

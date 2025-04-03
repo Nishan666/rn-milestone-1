@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNicknameViewModel } from '../viewModels/useNicknameViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
+import baseColors from '../utils/colorSchema';
 
 const NicknameForm: React.FC = () => {
   const { handleSubmit, errors, nickname, setNickname, setErrors } = useNicknameViewModel();
@@ -63,25 +64,25 @@ const NicknameForm: React.FC = () => {
 
 // Theme definitions
 const lightTheme = {
-  background: '#ffffff',
-  text: '#000000',
+  background: baseColors.white,
+  text:  baseColors.black,
   secondaryText: '#666666',
   border: '#dddddd',
-  inputBackground: '#ffffff',
+  inputBackground:  baseColors.white,
   primary: '#007bff',
-  buttonText: '#ffffff',
+  buttonText:  baseColors.white,
   error: '#ff0000',
   placeholder: '#999999',
 };
 
 const darkTheme = {
   background: '#121212',
-  text: '#ffffff',
+  text:  baseColors.white,
   secondaryText: '#aaaaaa',
   border: '#444444',
   inputBackground: '#222222',
   primary: '#0a84ff',
-  buttonText: '#ffffff',
+  buttonText:  baseColors.white,
   error: '#ff6b6b',
   placeholder: '#777777',
 };
