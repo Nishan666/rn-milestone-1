@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../localization/i18n';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
+import { Platform, Linking, Alert } from 'react-native';
 
 export const useSettingsViewModel = () => {
   const { t } = useTranslation();
   const [biometrics, setBiometrics] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const dispatch = useDispatch();
   const theme = useSelector(selectTheme);
@@ -24,30 +25,40 @@ export const useSettingsViewModel = () => {
       const storedBiometrics = await AsyncStorage.getItem('biometrics');
       if (storedBiometrics !== null) setBiometrics(JSON.parse(storedBiometrics));
       
-      // Load permission statuses
-      const storedLocationPermission = await AsyncStorage.getItem('locationPermission');
-      const storedNotificationPermission = await AsyncStorage.getItem('notificationPermission');
-      
-      if (storedLocationPermission !== null) {
-        setLocationPermission(JSON.parse(storedLocationPermission));
-        if (JSON.parse(storedLocationPermission)) {
-          fetchLocation();
-        }
-      } else {
-        // If no stored value, request permission
-        requestLocationPermission();
-      }
-      
-      if (storedNotificationPermission !== null) {
-        setNotificationPermission(JSON.parse(storedNotificationPermission));
-      } else {
-        // If no stored value, request permission
-        requestNotificationPermission();
-      }
+      // Check actual permission statuses (not just stored values)
+      checkLocationPermission();
+      checkNotificationPermission();
     };
     
     loadSettings();
   }, []);
+
+  const checkLocationPermission = async () => {
+    try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      const isGranted = status === 'granted';
+      setLocationPermission(isGranted);
+      await AsyncStorage.setItem('locationPermission', JSON.stringify(isGranted));
+      
+      // If permission is granted, fetch location
+      if (isGranted) {
+        fetchLocation();
+      }
+    } catch (error) {
+      console.error('Error checking location permission:', error);
+    }
+  };
+
+  const checkNotificationPermission = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      const isGranted = status === 'granted';
+      setNotificationPermission(isGranted);
+      await AsyncStorage.setItem('notificationPermission', JSON.stringify(isGranted));
+    } catch (error) {
+      console.error('Error checking notification permission:', error);
+    }
+  };
 
   const fetchLocation = async () => {
     try {
@@ -76,6 +87,18 @@ export const useSettingsViewModel = () => {
         await fetchLocation();
       } else {
         setIsLoadingLocation(false);
+        // Alert the user if permission was denied
+        Alert.alert(
+          t('permissionRequired'),
+          t('locationPermissionNeeded'),
+          [
+            { text: t('cancel'), style: 'cancel' },
+            { 
+              text: t('settings'), 
+              onPress: openAppSettings 
+            }
+          ]
+        );
       }
     } catch (error) {
       console.error('Error requesting location permission:', error);
@@ -88,7 +111,7 @@ export const useSettingsViewModel = () => {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       
-      // Only ask if permissions have not been determined
+      // Only ask if permissions have not been determined or denied
       if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
@@ -97,8 +120,33 @@ export const useSettingsViewModel = () => {
       const isGranted = finalStatus === 'granted';
       setNotificationPermission(isGranted);
       await AsyncStorage.setItem('notificationPermission', JSON.stringify(isGranted));
+      
+      if (!isGranted) {
+        // Alert the user if permission was denied
+        Alert.alert(
+          t('permissionRequired'),
+          t('notificationPermissionNeeded'),
+          [
+            { text: t('cancel'), style: 'cancel' },
+            { 
+              text: t('settings'), 
+              onPress: openAppSettings 
+            }
+          ]
+        );
+      }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
+    }
+  };
+
+  // Open device settings using just Linking API
+  const openAppSettings = () => {
+    if (Platform.OS === 'ios') {
+      Linking.openSettings();
+    } else {
+      // For Android, open app settings
+      Linking.openSettings();
     }
   };
 
@@ -109,25 +157,46 @@ export const useSettingsViewModel = () => {
   };
 
   const toggleLocationPermission = async () => {
-    if (!locationPermission) {
+    if (locationPermission) {
+      // If turning off (can't actually turn off permissions programmatically)
+      Alert.alert(
+        t('disableLocationTitle'),
+        t('disableLocationMessage'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { 
+            text: t('settings'), 
+            onPress: openAppSettings 
+          }
+        ]
+      );
+    } else {
       // If turning on, request permission
       await requestLocationPermission();
-    } else {
-      // If turning off, just update the state (cannot revoke permission programmatically)
-      setLocationPermission(false);
-      await AsyncStorage.setItem('locationPermission', JSON.stringify(false));
-      setCurrentLocation(null);
+      // Refresh permission status
+      await checkLocationPermission();
     }
   };
 
   const toggleNotificationPermission = async () => {
-    if (!notificationPermission) {
+    if (notificationPermission) {
+      // If turning off (can't actually turn off permissions programmatically)
+      Alert.alert(
+        t('disableNotificationsTitle'),
+        t('disableNotificationsMessage'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { 
+            text: t('settings'), 
+            onPress: openAppSettings 
+          }
+        ]
+      );
+    } else {
       // If turning on, request permission
       await requestNotificationPermission();
-    } else {
-      // If turning off, just update the state (cannot revoke permission programmatically)
-      setNotificationPermission(false);
-      await AsyncStorage.setItem('notificationPermission', JSON.stringify(false));
+      // Refresh permission status
+      await checkNotificationPermission();
     }
   };
 
@@ -136,9 +205,9 @@ export const useSettingsViewModel = () => {
   };
 
   const toggleLanguage = () => {
-    const newLanguage = i18n.language === 'en' ? 'fr' : 'en';
+    const newLanguage = language === 'en' ? 'fr' : 'en';
     i18n.changeLanguage(newLanguage);
-    dispatch(setLanguage(language === 'en' ? 'fr' : 'en'));
+    dispatch(setLanguage(newLanguage));
   };
 
   return {

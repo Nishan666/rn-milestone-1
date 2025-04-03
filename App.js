@@ -10,6 +10,10 @@ import { useSettingsViewModel } from './viewModels/useSettingsViewModel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
+import messaging from '@react-native-firebase/messaging';
+
+import {PermissionsAndroid} from 'react-native';
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -22,33 +26,35 @@ Notifications.setNotificationHandler({
 
 // Separate component that can use Redux
 function AppContent() {
-  const {
-    assetsLoaded,
-    fontsLoaded,
-    splashFinished,
-    setSplashFinished,
-    authenticated,
-  } = useMainModel();
-  
+  const { assetsLoaded, fontsLoaded, splashFinished, setSplashFinished, authenticated } =
+    useMainModel();
+
   const { theme } = useSettingsViewModel();
   const [initialPermissionsChecked, setInitialPermissionsChecked] = useState(false);
 
   useEffect(() => {
+    // In the checkInitialPermissions function in App.js
     const checkInitialPermissions = async () => {
       try {
         // Check if we've asked for permissions before
         const storedLocationPermission = await AsyncStorage.getItem('locationPermission');
         const storedNotificationPermission = await AsyncStorage.getItem('notificationPermission');
 
-        // If we haven't asked yet, request permissions
+        // Only request permissions if they haven't been asked for yet
         if (storedLocationPermission === null) {
           const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-          await AsyncStorage.setItem('locationPermission', JSON.stringify(locationStatus === 'granted'));
+          await AsyncStorage.setItem(
+            'locationPermission',
+            JSON.stringify(locationStatus === 'granted'),
+          );
         }
 
         if (storedNotificationPermission === null) {
           const { status: notificationStatus } = await Notifications.requestPermissionsAsync();
-          await AsyncStorage.setItem('notificationPermission', JSON.stringify(notificationStatus === 'granted'));
+          await AsyncStorage.setItem(
+            'notificationPermission',
+            JSON.stringify(notificationStatus === 'granted'),
+          );
         }
       } catch (error) {
         console.error('Error checking initial permissions:', error);
@@ -59,6 +65,21 @@ function AppContent() {
 
     checkInitialPermissions();
   }, []);
+
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+  useEffect(() => {
+    requestUserPermission();
+  }, []);  
 
   if (!fontsLoaded || !assetsLoaded || !initialPermissionsChecked) {
     return (
@@ -94,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });
 
 const themeStyles = StyleSheet.create({
