@@ -319,6 +319,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingHorizontal: 15,
     borderRadius: 20,
+    height: 40,
     backgroundColor: '#007bff',
   },
   sendButtonDisabled: {

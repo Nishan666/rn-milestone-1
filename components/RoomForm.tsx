@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,9 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { useRoomViewModel } from '../viewModels/useRoomViewModel';
 import { useSettingsViewModel } from '../viewModels/useSettingsViewModel';
@@ -26,15 +27,60 @@ const RoomForm: React.FC = () => {
     selectedRoomId,
     setSelectedRoomId,
     handleSubmit,
+    fetchRooms, // Assume this function exists in your viewModel to fetch rooms
   } = useRoomViewModel();
 
   const { theme, t } = useSettingsViewModel();
   const isDarkMode = theme === 'dark';
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredRooms, setFilteredRooms] = useState(existingRooms);
+
+  // Handle search with frontend filtering
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredRooms(existingRooms);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = existingRooms.filter(room => room.name.toLowerCase().includes(query));
+      setFilteredRooms(filtered);
+    }
+  }, [searchQuery, existingRooms]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchRooms();
+    setRefreshing(false);
+  };
+
+  const renderRoomItem = ({ item }: any) => (
+    <Pressable
+      key={item.id}
+      style={[
+        styles.roomItem,
+        isDarkMode && styles.roomItemDark,
+        selectedRoomId === item.id
+          ? isDarkMode
+            ? styles.selectedRoomItemDark
+            : styles.selectedRoomItem
+          : null,
+      ]}
+      onPress={() => setSelectedRoomId(item.id)}>
+      <Text
+        style={
+          selectedRoomId === item.id
+            ? styles.selectedRoomItemText
+            : [styles.roomItemText, isDarkMode && styles.roomItemTextDark]
+        }>
+        {item.name}
+      </Text>
+    </Pressable>
+  );
 
   if (loading) {
     return (
-      <View style={styles.containerLoading}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={[styles.loadingContainer, isDarkMode ? themeStyles.dark : themeStyles.light]}>
+        <ActivityIndicator size="large" color={isDarkMode ? '#fff' : '#007bff'} />
       </View>
     );
   }
@@ -43,14 +89,18 @@ const RoomForm: React.FC = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[styles.container, isDarkMode && styles.containerDark]}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.scrollContainer}>
         <Text style={[styles.title, isDarkMode && styles.titleDark]}>{t('welcome')}</Text>
         <View style={styles.roomOptions}>
           <Pressable
             style={[
               styles.option,
               isDarkMode && styles.optionDark,
-              createNewRoom ? (isDarkMode ? styles.selectedOptionDark : styles.selectedOption) : null
+              createNewRoom
+                ? isDarkMode
+                  ? styles.selectedOptionDark
+                  : styles.selectedOption
+                : null,
             ]}
             onPress={() => setCreateNewRoom(true)}>
             <Text
@@ -67,7 +117,11 @@ const RoomForm: React.FC = () => {
             style={[
               styles.option,
               isDarkMode && styles.optionDark,
-              !createNewRoom ? (isDarkMode ? styles.selectedOptionDark : styles.selectedOption) : null
+              !createNewRoom
+                ? isDarkMode
+                  ? styles.selectedOptionDark
+                  : styles.selectedOption
+                : null,
             ]}
             onPress={() => setCreateNewRoom(false)}>
             <Text
@@ -88,7 +142,7 @@ const RoomForm: React.FC = () => {
               style={[
                 styles.input,
                 isDarkMode && styles.inputDark,
-                errors.room ? styles.inputError : null
+                errors.room ? styles.inputError : null,
               ]}
               value={roomName}
               onChangeText={text => {
@@ -103,34 +157,40 @@ const RoomForm: React.FC = () => {
         ) : (
           <View style={styles.formGroup}>
             <Text style={[styles.label, isDarkMode && styles.labelDark]}>{t('selectRoom')}</Text>
+
+            {/* Search input for existing rooms */}
+            <TextInput
+              style={[styles.input, isDarkMode && styles.inputDark, styles.searchInput]}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder={t('searchRooms')}
+              placeholderTextColor={isDarkMode ? '#888' : '#aaa'}
+            />
+
             {loading ? (
               <Text style={[styles.loadingText, isDarkMode && styles.loadingTextDark]}>
                 {t('loadingRooms')}...
               </Text>
             ) : existingRooms.length > 0 ? (
-              <View style={styles.roomList}>
-                {existingRooms.map(room => (
-                  <Pressable
-                    key={room.id}
-                    style={[
-                      styles.roomItem,
-                      isDarkMode && styles.roomItemDark,
-                      selectedRoomId === room.id
-                        ? (isDarkMode ? styles.selectedRoomItemDark : styles.selectedRoomItem)
-                        : null,
-                    ]}
-                    onPress={() => setSelectedRoomId(room.id)}>
-                    <Text
-                      style={
-                        selectedRoomId === room.id
-                          ? styles.selectedRoomItemText
-                          : [styles.roomItemText, isDarkMode && styles.roomItemTextDark]
-                      }>
-                      {room.name}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
+              <FlatList
+                data={filteredRooms}
+                renderItem={renderRoomItem}
+                keyExtractor={item => item.id.toString()}
+                style={styles.roomList}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={[isDarkMode ? '#4da6ff' : '#007bff']}
+                    tintColor={isDarkMode ? '#4da6ff' : '#007bff'}
+                  />
+                }
+                ListEmptyComponent={
+                  <Text style={[styles.noRoomsText, isDarkMode && styles.noRoomsTextDark]}>
+                    {t('noMatchingRooms')}
+                  </Text>
+                }
+              />
             ) : (
               <Text style={[styles.noRoomsText, isDarkMode && styles.noRoomsTextDark]}>
                 {t('noRoomsAvailable')}
@@ -143,7 +203,7 @@ const RoomForm: React.FC = () => {
         <Pressable style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>{t('saveAndContinue')}</Text>
         </Pressable>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -157,7 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
   },
   scrollContainer: {
-    flexGrow: 1,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -205,6 +265,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a2a2a',
     color: '#eee',
   },
+  searchInput: {
+    marginBottom: 8,
+  },
   inputError: {
     borderColor: 'red',
   },
@@ -250,7 +313,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   roomList: {
-    maxHeight: 150,
+    height: 250, // Increased height
     width: '100%',
   },
   roomItem: {
@@ -311,11 +374,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  containerLoading: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+const themeStyles = StyleSheet.create({
+  light: {
+    backgroundColor: '#fff',
+  },
+  dark: {
+    backgroundColor: '#121212',
   },
 });
 
