@@ -1,20 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
-  Image,
   ActivityIndicator,
   Alert,
   Pressable,
+  ScrollView,
+  FlatList
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { useImageUploadScreenViewModel } from '../viewModels/useImageUploadScreenViewModel';
 
 export default function ImageUploadScreen() {
-  const { isAuthenticated, token, setToken, handleLogin, isLoading, image, pickImage, uploadImage, uploadStatus, t, theme } = useImageUploadScreenViewModel()
+  const { 
+    isAuthenticated, 
+    token, 
+    setToken, 
+    handleLogin, 
+    isLoading, 
+    image, 
+    pickImage, 
+    uploadImage, 
+    uploadStatus, 
+    uploadedImages,
+    clearUploadHistory,
+    t, 
+    theme 
+  } = useImageUploadScreenViewModel();
+  
   const themeColors = theme === 'dark' ? darkTheme : lightTheme;
+
+  const renderImageItem = ({ item }) => (
+    <View style={styles.imageItem}>
+      <FastImage
+        style={styles.thumbnailImage}
+        source={{ uri: item }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+    </View>
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: themeColors.background }]}>
@@ -45,39 +71,87 @@ export default function ImageUploadScreen() {
           {isLoading && <ActivityIndicator style={styles.loader} size="small" color={themeColors.primary} />}
         </View>
       ) : (
-        <View style={[styles.uploadContainer, {
-          backgroundColor: themeColors.cardBackground,
-          shadowColor: themeColors.shadow
-        }]}>
-          {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={[styles.uploadContainer, {
+            backgroundColor: themeColors.cardBackground,
+            shadowColor: themeColors.shadow
+          }]}>
+            {image ? (
+              <FastImage 
+                source={{ uri: image }} 
+                style={styles.imagePreview}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+            ) : (
+              <View style={[styles.imagePlaceholder, { backgroundColor: themeColors.border }]}>
+                <Text style={{ color: themeColors.secondaryText }}>{t('noImageSelected')}</Text>
+              </View>
+            )}
 
-          <View style={styles.buttonContainer}>
-            <Pressable
-              style={[styles.button, { backgroundColor: themeColors.primary }]}
-              disabled={isLoading}
-              onPress={pickImage}
-            >
-              <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('pickImage')}</Text>
-            </Pressable>
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={[styles.button, { backgroundColor: themeColors.primary }]}
+                disabled={isLoading}
+                onPress={pickImage}
+              >
+                <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('pickImage')}</Text>
+              </Pressable>
 
-            <Pressable
-              style={[
-                styles.button,
-                {
-                  backgroundColor: image ? themeColors.primary : themeColors.disabledButton,
-                  opacity: (isLoading || !image) ? 0.7 : 1
-                }
-              ]}
-              disabled={isLoading || !image}
-              onPress={uploadImage}
-            >
-              <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('uploadImage')}</Text>
-            </Pressable>
+              <Pressable
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: image ? themeColors.primary : themeColors.disabledButton,
+                    opacity: (isLoading || !image) ? 0.7 : 1
+                  }
+                ]}
+                disabled={isLoading || !image}
+                onPress={uploadImage}
+              >
+                <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('uploadImage')}</Text>
+              </Pressable>
+            </View>
+
+            {isLoading && <ActivityIndicator size="large" color={themeColors.primary} />}
+            <Text style={[styles.status, { color: themeColors.secondaryText }]}>{uploadStatus}</Text>
           </View>
 
-          {isLoading && <ActivityIndicator size="large" color={themeColors.primary} />}
-          <Text style={[styles.status, { color: themeColors.secondaryText }]}>{uploadStatus}</Text>
-        </View>
+          {/* Previously uploaded images section */}
+          {uploadedImages.length > 0 && (
+            <View style={[styles.historyContainer, {
+              backgroundColor: themeColors.cardBackground,
+              shadowColor: themeColors.shadow
+            }]}>
+              <View style={styles.historyHeader}>
+                <Text style={[styles.historyTitle, { color: themeColors.text }]}>{t('uploadHistory')}</Text>
+                <Pressable
+                  style={[styles.clearButton, { backgroundColor: themeColors.danger }]}
+                  onPress={() => {
+                    Alert.alert(
+                      t('confirm'),
+                      t('clearHistoryConfirm'),
+                      [
+                        { text: t('cancel'), style: 'cancel' },
+                        { text: t('clear'), onPress: clearUploadHistory }
+                      ]
+                    );
+                  }}
+                >
+                  <Text style={[styles.buttonText, { color: themeColors.buttonText }]}>{t('clearHistory')}</Text>
+                </Pressable>
+              </View>
+              
+              <FlatList
+                data={uploadedImages}
+                renderItem={renderImageItem}
+                keyExtractor={(item, index) => `image-${index}`}
+                horizontal={false}
+                numColumns={2}
+                contentContainerStyle={styles.gridContainer}
+              />
+            </View>
+          )}
+        </ScrollView>
       )}
     </View>
   );
@@ -94,6 +168,7 @@ const lightTheme = {
   inputBackground: '#ffffff',
   placeholder: '#999999',
   primary: '#007bff',
+  danger: '#dc3545',
   disabledButton: '#cccccc',
   buttonText: '#ffffff',
 };
@@ -108,6 +183,7 @@ const darkTheme = {
   inputBackground: '#2c2c2c',
   placeholder: '#777777',
   primary: '#0a84ff',
+  danger: '#e74c3c',
   disabledButton: '#555555',
   buttonText: '#ffffff',
 };
@@ -116,6 +192,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  scrollContent: {
+    paddingBottom: 30,
   },
   title: {
     fontSize: 24,
@@ -164,13 +243,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginBottom: 20,
+  },
+  imagePlaceholder: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imagePreview: {
     width: 200,
     height: 200,
     marginBottom: 20,
     borderRadius: 10,
-    backgroundColor: '#e1e1e1',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -182,5 +269,43 @@ const styles = StyleSheet.create({
   status: {
     marginTop: 20,
     textAlign: 'center',
+  },
+  historyContainer: {
+    padding: 20,
+    borderRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  historyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  clearButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  gridContainer: {
+    paddingTop: 10,
+  },
+  imageItem: {
+    flex: 1,
+    margin: 5,
+    maxWidth: '48%',
+    aspectRatio: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
   },
 });
